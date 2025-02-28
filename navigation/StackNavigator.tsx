@@ -20,7 +20,8 @@ const StackNavigator = () => {
     function BottomTabs() {
         return (
             <Tab.Navigator
-                screenOptions={{                    
+                screenOptions={{
+                    //headerShown: false,
                     tabBarStyle: {
                         backgroundColor: theme.background
                     },
@@ -35,6 +36,7 @@ const StackNavigator = () => {
                     name="Home"
                     component={HomeScreen}
                     options={{
+                        headerShown: true,
                         tabBarIcon: ({
                             focused,
                             color,
@@ -59,6 +61,7 @@ const StackNavigator = () => {
                     name="Play"
                     component={PlayScreen}
                     options={{
+                        headerShown: false,
                         tabBarIcon: ({ color, size }) => (
                             <AntDesign
                                 name={"addusergroup"}

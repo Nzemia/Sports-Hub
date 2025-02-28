@@ -153,6 +153,7 @@ const HomeScreen = () => {
                     </View>
                 </View>
 
+          {/** activity and view button */}
                 <View
                     style={{
                         padding: 13,
