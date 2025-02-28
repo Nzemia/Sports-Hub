@@ -20,8 +20,7 @@ const StackNavigator = () => {
     function BottomTabs() {
         return (
             <Tab.Navigator
-                screenOptions={{
-                    headerShown: false,
+                screenOptions={{                    
                     tabBarStyle: {
                         backgroundColor: theme.background
                     },

@@ -26,7 +26,7 @@ const lightTheme: ThemeType = {
     background: "#FFFFFF",
     text: "#000000",
     primary: "#1E1E1E",
-    secondary: "#FFFFFF",
+    secondary: "#c2c2c2",
     activeTabColor: "#1E1E1E",
     inactiveTabColor: "#9DB2CE",
     statusBarStyle: "dark"
@@ -36,7 +36,7 @@ const darkTheme: ThemeType = {
     background: "#121212",
     text: "#FFFFFF",
     primary: "#FFFFFF",
-    secondary: "#1E1E1E",
+    secondary: "#595959",
     activeTabColor: "#FFFFFF",
     inactiveTabColor: "#9DB2CE",
     statusBarStyle: "light"
