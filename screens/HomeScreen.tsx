@@ -505,6 +505,7 @@ const HomeScreen = () => {
                     </View>
                 </View>
 
+                {/**Footer */}
                 <View>
                     <View
                         style={{
@@ -524,12 +525,12 @@ const HomeScreen = () => {
                         />
                     </View>
                     <Text
-                        style={{
-                            color: theme.text,
-                            textAlign: "center"
-                        }}
+                        style={[
+                            styles.footerText,
+                            { color: theme.text }
+                        ]}
                     >
-                        Your Sports community app
+                        Developed by Nzemia with ❤️
                     </Text>
                 </View>
             </ScrollView>
@@ -621,5 +622,11 @@ const styles = StyleSheet.create({
     spotlightText: {
         fontFamily: fontFamily.medium,
         fontSize: 18
+    },
+    footerText: {
+        fontFamily: fontFamily.extraBold,
+        fontSize: 16,
+        textAlign: "center",
+        marginBottom: 10
     }
 })
