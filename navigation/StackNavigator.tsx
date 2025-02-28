@@ -75,6 +75,7 @@ const StackNavigator = () => {
                     name="Book"
                     component={BookScreen}
                     options={{
+                        headerShown: false,
                         tabBarIcon: ({ color, size }) => (
                             <SimpleLineIcons
                                 name={"book-open"}
