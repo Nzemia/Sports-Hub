@@ -13,7 +13,7 @@ import { useTheme } from "@/constants/ThemeProvider"
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"
 import { fontFamily } from "@/constants/fonts"
 import CustomTextInput from "@/components/TextInput"
-import { data } from "@/constants/data"
+import { data, venues } from "@/constants/data"
 import VenueCard from "@/components/VenueCard"
 
 const BookScreen = () => {
@@ -182,7 +182,7 @@ const BookScreen = () => {
             </Pressable>
 
             <FlatList
-                data={data}
+                data={venues}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                     <VenueCard item={item} />
