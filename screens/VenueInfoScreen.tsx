@@ -6,7 +6,7 @@ import {
     Text,
     View
 } from "react-native"
-import React from "react"
+import React, { useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import {
@@ -16,11 +16,14 @@ import {
 import { fontFamily } from "@/constants/fonts"
 import { RootStackParamList } from "@/configs/global"
 import {
+    AntDesign,
     FontAwesome,
     Ionicons,
     MaterialCommunityIcons
 } from "@expo/vector-icons"
 import Amenities from "@/components/Amenities"
+import CustomButton from "@/components/Button"
+import Divider from "@/components/Divider"
 
 type VenueRouteProp = RouteProp<RootStackParamList, "Venue">
 
@@ -28,6 +31,8 @@ const VenueInfoScreen = () => {
     const { theme } = useTheme()
 
     const route = useRoute<VenueRouteProp>()
+
+    const [loading, setLoading] = useState(false)
 
     //console.log("routes params", route.params)
     return (
@@ -291,6 +296,80 @@ const VenueInfoScreen = () => {
 
                     {/**Amenities */}
                     <Amenities />
+
+                    {/** activities */}
+                    <View style={{ marginHorizontal: 10 }}>
+                        <Text
+                            style={[
+                                styles.activitiesText,
+                                {
+                                    color: theme.text
+                                }
+                            ]}
+                        >
+                            Activities
+                        </Text>
+
+                        {/** Create Activity Button */}
+                        <View style={{ marginBottom: 20 }}>
+                            <CustomButton
+                                title={"Create Activity"}
+                                loading={loading}
+                                style={{
+                                    borderColor: "#787878",
+                                    marginTop: 10,
+                                    borderWidth: 2,
+                                    padding: 10,
+                                    justifyContent:
+                                        "center",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    gap: 10,
+                                    backgroundColor:
+                                        "#787878",
+                                    width: "100%"
+                                }}
+                            />
+                        </View>
+                    </View>
+
+                    {/**divider */}
+                    <Divider
+                        color={theme.text}
+                        thickness={3}
+                        marginVertical={20}
+                    />
+
+                    {/** Book Now Button */}
+                    <View
+                        style={{
+                            marginHorizontal: 10,
+                            marginBottom: 30
+                        }}
+                    >
+                        <Text
+                            style={[
+                                styles.bookNowText,
+                                { color: theme.text }
+                            ]}
+                        >
+                            Book Now
+                        </Text>
+                        <CustomButton
+                            title={"Book Now"}
+                            style={{
+                                marginTop: 10,
+                                padding: 10,
+                                justifyContent: "center",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 10,
+                                backgroundColor: "green",
+                                width: "100%"
+                            }}
+                            loading={loading}
+                        />
+                    </View>
                 </>
             </ScrollView>
         </SafeAreaView>
@@ -317,6 +396,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: fontFamily.regular
     },
+    activitiesText: {
+        fontSize: 15,
+        fontFamily: fontFamily.bold,
+        marginLeft: 15
+    },
     totalActivitiesText: {
         fontSize: 14,
         fontFamily: fontFamily.regular
@@ -335,5 +419,10 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.regular,
         textAlign: "center",
         marginTop: 10
+    },
+    bookNowText: {
+        fontSize: 15,
+        fontFamily: fontFamily.extraBold,
+        textAlign: "center"
     }
 })

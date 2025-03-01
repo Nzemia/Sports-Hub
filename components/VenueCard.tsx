@@ -153,7 +153,7 @@ const VenueCard = ({ item }: VenueCardProps) => {
 
                         <View
                             style={{
-                                height: 1,
+                                height: 2,
                                 borderWidth: 0.6,
                                 borderColor: theme.text,
                                 marginVertical: 10
