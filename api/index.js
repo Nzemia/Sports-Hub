@@ -1,20 +1,22 @@
 const express = require("express")
 const cors = require("cors")
 const bodyParser = require("body-parser")
-const moment = require("moment")
-
 const connectDB = require("./config/db")
+
+const authRoutes = require("./routes/index")
 
 const app = express()
 
+// Middleware
 app.use(cors())
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-const jwt = require("jsonwebtoken")
 
 connectDB()
+
+// Mount Routes
+app.use("/api/auth", authRoutes); 
 
 // Start server
 const PORT = 3000
