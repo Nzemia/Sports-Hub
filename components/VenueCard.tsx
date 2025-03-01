@@ -10,6 +10,14 @@ import { useTheme } from "@/constants/ThemeProvider"
 import { fontFamily } from "@/constants/fonts"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { AntDesign } from "@expo/vector-icons"
+import { useNavigation } from "expo-router"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { RootStackParamList } from "@/configs/global"
+
+type VenueNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    "Venue"
+>
 
 type VenueCardProps = {
     item: {
@@ -18,11 +26,18 @@ type VenueCardProps = {
         name: string
         rating: number
         address: string
+        location: string
+        bookings: number
+        timings: string
+        sportsAvailable: string
+        newImage: string
     }
 }
 
 const VenueCard = ({ item }: VenueCardProps) => {
     const { theme } = useTheme()
+
+    const navigation = useNavigation<VenueNavigationProp>()
     return (
         <SafeAreaView
             style={{
@@ -32,6 +47,20 @@ const VenueCard = ({ item }: VenueCardProps) => {
         >
             <View style={{ margin: 15, marginTop: 0 }}>
                 <Pressable
+                    onPress={() =>
+                        navigation.navigate("Venue", {
+                            id: item?.id,
+                            name: item.name,
+                            image: item.newImage,
+                            sportsAvailable:
+                                item.sportsAvailable,
+                            rating: item.rating,
+                            timings: item.timings,
+                            address: item.address,
+                            location: item.location,
+                            bookings: item.bookings
+                        })
+                    }
                     style={{
                         backgroundColor: theme.secondary,
                         borderRadius: 5,

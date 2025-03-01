@@ -11,10 +11,12 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons"
 import PlayScreen from "@/screens/PlayScreen"
 import BookScreen from "@/screens/BookScreen"
 import ProfileScreen from "@/screens/ProfileScreen"
+import VenueInfoScreen from "@/screens/VenueInfoScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
     const Stack = createNativeStackNavigator()
+
     const Tab = createBottomTabNavigator()
 
     function BottomTabs() {
@@ -123,6 +125,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Main"
                     component={BottomTabs}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Venue"
+                    component={VenueInfoScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
