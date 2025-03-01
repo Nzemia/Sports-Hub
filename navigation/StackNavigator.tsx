@@ -173,14 +173,14 @@ const StackNavigator = () => {
     function MainStack() {
         return (
             <Stack.Navigator>
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="Main"
                     component={BottomTabs}
                     options={{ headerShown: false }}
-                />
+                /> */}
                 <Stack.Screen
-                    name="Venue"
-                    component={VenueInfoScreen}
+                    name="Auth"
+                    component={AuthStack}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

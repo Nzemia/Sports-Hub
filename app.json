@@ -46,6 +46,12 @@
                         "./assets/fonts/Kanit-SemiBold.ttf"
                     ]
                 }
+            ],
+            [
+                "expo-location",
+                {
+                    "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+                }
             ]
         ],
         "experiments": {

@@ -1,14 +1,145 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import {
+    ActivityIndicator,
+    Image,
+    StyleSheet,
+    Text,
+    View
+} from "react-native"
+import React, { useEffect, useRef, useState } from "react"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { useTheme } from "@/constants/ThemeProvider"
+import MapView, {
+    MapViewProps,
+    Marker
+} from "react-native-maps"
+import { useLocation } from "@/utils/useLocation"
+import { users } from "@/constants/data"
+import { generateCircularPoints } from "@/utils/generateCircularPoints"
+import { fontFamily } from "@/constants/fonts"
 
 const StartScreen = () => {
-  return (
-    <View>
-      <Text>StartScreen</Text>
-    </View>
-  );
-};
+    const { theme } = useTheme()
 
-export default StartScreen;
+    const mapView = useRef<MapView>(null)
 
-const styles = StyleSheet.create({});
+    const {
+        errorMsg,
+        location,
+        markerPosition,
+        handleMarkerDragEnd
+    } = useLocation()
+
+    if (errorMsg) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <Text>{errorMsg}</Text>
+            </View>
+        )
+    }
+    if (!location) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <ActivityIndicator
+                    size="large"
+                    color="blue"
+                />
+            </View>
+        )
+    }
+
+    return (
+        <SafeAreaView
+            style={{
+                flex: 1,
+                backgroundColor: theme.background
+            }}
+        >
+            {/** map */}
+            <MapView
+                style={{
+                    width: "100%",
+                    height: 500,
+                    marginTop: 20,
+                    borderRadius: 10
+                }}
+                initialRegion={{
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421
+                }}
+            >
+                <Marker
+                    draggable={true}
+                    onDragEnd={handleMarkerDragEnd}
+                    coordinate={markerPosition}
+                >
+                    {/* Custom Marker Pin */}
+                    <Image
+                        source={require("../assets/images/map_icon_pin.png")}
+                        style={{
+                            width: 25,
+                            height: 25
+                        }}
+                    />
+                </Marker>
+            </MapView>
+
+            <View
+                style={{
+                    marginTop: 35,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <Text
+                    style={[
+                        styles.neighborhoodText,
+                        { color: theme.text }
+                    ]}
+                >
+                    Find Players in Your Neighborhood
+                </Text>
+
+                <Text
+                    style={[
+                        styles.justLikeYouText,
+                        { color: theme.text }
+                    ]}
+                >
+                    Just like you did as a Kid!
+                </Text>
+            </View>
+        </SafeAreaView>
+    )
+}
+
+export default StartScreen
+
+const styles = StyleSheet.create({
+    neighborhoodText: {
+        fontSize: 22,
+        fontFamily: fontFamily.extraBold,
+        marginTop: 20,
+        width: "50%",
+        textAlign: "center"
+    },
+    justLikeYouText: {
+        fontSize: 16,
+        fontFamily: fontFamily.italic,
+        marginTop: 10,
+        textAlign: "center"
+    }
+})
