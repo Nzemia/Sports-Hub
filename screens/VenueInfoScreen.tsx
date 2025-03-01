@@ -20,6 +20,7 @@ import {
     Ionicons,
     MaterialCommunityIcons
 } from "@expo/vector-icons"
+import Amenities from "@/components/Amenities"
 
 type VenueRouteProp = RouteProp<RootStackParamList, "Venue">
 
@@ -287,6 +288,9 @@ const VenueInfoScreen = () => {
                                 )
                             )}
                     </ScrollView>
+
+                    {/**Amenities */}
+                    <Amenities />
                 </>
             </ScrollView>
         </SafeAreaView>
