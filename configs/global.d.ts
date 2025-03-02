@@ -9,5 +9,8 @@ export type RootStackParamList = {
         address: string
         location: string
         bookings: number
-    }
+    },
+    Login: undefined
+    Register: undefined
+    Password: undefined
 }
