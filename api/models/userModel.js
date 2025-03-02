@@ -24,10 +24,11 @@ const userSchema = new mongoose.Schema(
         skill: {
             type: String
         },
-        phoneNumber: {
-            type: String,
-            unique: true
-        },
+        // phoneNumber: {
+        //     type: String,
+        //     unique: false,
+        //     required: false
+        // },
         otp: String,
         noOfGames: {
             type: Number,

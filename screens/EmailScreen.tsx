@@ -4,7 +4,7 @@ import {
     Text,
     View
 } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import { fontFamily } from "@/constants/fonts"
@@ -12,6 +12,8 @@ import CustomTextInput from "@/components/TextInput"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "@/configs/global"
 import { useNavigation } from "expo-router"
+import useRegistration from "@/hooks/useRegistration"
+import { getRegistrationProgress } from "@/utils/RegistrationProgress"
 
 type PasswordNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -25,9 +27,38 @@ const EmailScreen = () => {
         useNavigation<PasswordNavigationProp>()
 
     const [email, setEmail] = useState("")
+    const [isEmailValid, setIsEmailValid] =
+        useState<boolean>(false)
 
-    const sendOTP = () => {
-        navigation.navigate("Password")
+    const { validateAndSave, error } =
+        useRegistration("Email")
+
+    useEffect(() => {
+        getRegistrationProgress("Email").then(
+            progressData => {
+                if (progressData) {
+                    setEmail(progressData.email || "")
+                }
+            }
+        )
+    }, [])
+
+    useEffect(() => {
+        setIsEmailValid(isValidEmail(email))
+    }, [email])
+
+    const isValidEmail = (email: string): boolean => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return emailRegex.test(email)
+    }
+
+    const sendOTP = async () => {
+        const isValidEmail = await validateAndSave({
+            email
+        })
+        if (isValidEmail) {
+            navigation.navigate("Password")
+        }
     }
     return (
         <SafeAreaView
@@ -77,16 +108,27 @@ const EmailScreen = () => {
 
                     <Pressable
                         onPress={sendOTP}
-                        style={{
-                            padding: 15,
-                            marginTop: 20,
-                            backgroundColor:
-                                email?.length > 5
-                                    ? "#2dcf30"
-                                    : "gray",
-                            borderRadius: 8
-                        }}
+                        disabled={!isEmailValid}
+                        style={[
+                            styles.button,
+                            {
+                                backgroundColor:
+                                    isEmailValid
+                                        ? "#2DCF30"
+                                        : "#A5D6A7"
+                            }
+                        ]}
                     >
+                        {error && (
+                            <Text
+                                style={[
+                                    styles.errorText,
+                                    { color: "red" }
+                                ]}
+                            >
+                                {error}
+                            </Text>
+                        )}
                         <Text
                             style={{ textAlign: "center" }}
                         >
@@ -134,5 +176,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
         textAlign: "center",
         fontFamily: fontFamily.italic
+    },
+    button: {
+        padding: 15,
+        marginTop: 20,
+        borderRadius: 8,
+        alignItems: "center"
+    },
+    errorText: {
+        marginTop: 10
     }
 })

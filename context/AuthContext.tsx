@@ -7,7 +7,6 @@ import React, {
 } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { jwtDecode } from "jwt-decode"
-import "core-js/stable/atob"
 
 interface DecodedToken {
     userId: string

@@ -1,5 +1,9 @@
-import { StyleSheet } from "react-native"
-import React from "react"
+import {
+    ActivityIndicator,
+    StyleSheet,
+    View
+} from "react-native"
+import React, { useContext } from "react"
 import { useTheme } from "@/constants/ThemeProvider"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
@@ -11,7 +15,6 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons"
 import PlayScreen from "@/screens/PlayScreen"
 import BookScreen from "@/screens/BookScreen"
 import ProfileScreen from "@/screens/ProfileScreen"
-import VenueInfoScreen from "@/screens/VenueInfoScreen"
 import StartScreen from "@/screens/StartScreen"
 import LoginScreen from "@/screens/LoginScreen"
 import PasswordScreen from "@/screens/PasswordScreen"
@@ -20,12 +23,30 @@ import SelectImage from "@/screens/SelectImage"
 import PreFinalScreen from "@/screens/PreFinalScreen"
 import OtpScreen from "@/screens/OtpScreen"
 import EmailScreen from "@/screens/EmailScreen"
+import { AuthContext } from "@/context/AuthContext"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
     const Stack = createNativeStackNavigator()
 
     const Tab = createBottomTabNavigator()
+
+    const { isLoading, token } = useContext(AuthContext)
+    //console.log("token:", token)
+
+    if (isLoading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <ActivityIndicator size={"large"} />
+            </View>
+        )
+    }
 
     function BottomTabs() {
         return (
@@ -173,20 +194,28 @@ const StackNavigator = () => {
     function MainStack() {
         return (
             <Stack.Navigator>
-                {/* <Stack.Screen
+                <Stack.Screen
                     name="Main"
                     component={BottomTabs}
                     options={{ headerShown: false }}
-                /> */}
-                <Stack.Screen
+                />
+                {/* <Stack.Screen
                     name="Auth"
                     component={AuthStack}
                     options={{ headerShown: false }}
-                />
+                /> */}
             </Stack.Navigator>
         )
     }
-    return <MainStack />
+    //return <MainStack />
+
+    return token === null ||
+        token === undefined ||
+        token === "" ? (
+        <AuthStack />
+    ) : (
+        <MainStack />
+    )
 }
 
 export default StackNavigator

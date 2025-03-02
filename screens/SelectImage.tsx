@@ -5,7 +5,7 @@ import {
     Text,
     View
 } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import { images } from "@/constants/data"
@@ -16,6 +16,8 @@ import GoNextButton from "@/components/GoNextButton"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "@/configs/global"
 import { useNavigation } from "expo-router"
+import useRegistration from "@/hooks/useRegistration"
+import { getRegistrationProgress } from "@/utils/RegistrationProgress"
 
 type PreFinalNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -30,8 +32,26 @@ const SelectImage = () => {
 
     const [image, setImage] = useState("")
 
-    const handleNext = () => {
-        navigation.navigate("PreFinal")
+    const { validateAndSave, error } =
+        useRegistration("Image")
+    useEffect(() => {
+        getRegistrationProgress("Image").then(
+            progressData => {
+                if (
+                    progressData &&
+                    progressData.imageUrls
+                ) {
+                    setImage(progressData.imageUrls)
+                }
+            }
+        )
+    }, [])
+
+    const handleNext = async () => {
+        const isValid = await validateAndSave({ image })
+        if (isValid) {
+            navigation.navigate("PreFinal")
+        }
     }
     return (
         <SafeAreaView
@@ -188,7 +208,7 @@ export default SelectImage
 const styles = StyleSheet.create({
     headerText: {
         fontSize: 22,
-        fontFamily: fontFamily.bold, 
+        fontFamily: fontFamily.bold,
         textAlign: "center",
         marginTop: 20
     },

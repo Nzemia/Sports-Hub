@@ -17,6 +17,7 @@ import CustomTextInput from "@/components/TextInput"
 import { RootStackParamList } from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useNavigation } from "expo-router"
+import useRegistration from "@/hooks/useRegistration"
 
 type ImageNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -30,8 +31,14 @@ const PasswordScreen = () => {
 
     const [password, setPassword] = useState("")
 
-    const handleNext = () => {
-        navigation.navigate("Image")
+    const { validateAndSave, error } =
+        useRegistration("Password")
+
+    const handleNext = async () => {
+        const isValid = await validateAndSave({ password })
+        if (isValid) {
+            navigation.navigate("Image")
+        }
     }
     return (
         <SafeAreaView
@@ -100,6 +107,17 @@ const PasswordScreen = () => {
                     }}
                 />
 
+                {error && (
+                    <Text
+                        style={[
+                            styles.errorText,
+                            { color: "red" }
+                        ]}
+                    >
+                        {error}
+                    </Text>
+                )}
+
                 <TouchableOpacity
                     onPress={handleNext}
                     activeOpacity={0.8}
@@ -131,5 +149,8 @@ const styles = StyleSheet.create({
         fontFamily: fontFamily.bold,
         textAlign: "center",
         marginTop: 20
+    },
+    errorText: {
+        marginTop: 10
     }
 })

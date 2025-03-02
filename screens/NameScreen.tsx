@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from "react-native"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import { fontFamily } from "@/constants/fonts"
@@ -9,6 +9,8 @@ import GoNextButton from "@/components/GoNextButton"
 import { RootStackParamList } from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useNavigation } from "expo-router"
+import useRegistration from "@/hooks/useRegistration"
+import { getRegistrationProgress } from "@/utils/RegistrationProgress"
 
 type EmailNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -23,8 +25,29 @@ const NameScreen = () => {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
 
-    const handleNext = () => {
-        navigation.navigate("Email")
+    const { validateAndSave, error } =
+        useRegistration("Name")
+
+    useEffect(() => {
+        getRegistrationProgress("Name").then(
+            progressData => {
+                if (progressData) {
+                    setFirstName(
+                        progressData.firstName || ""
+                    )
+                }
+            }
+        )
+    }, [])
+
+    const handleNext = async () => {
+        const isValid = await validateAndSave({
+            firstName,
+            lastName
+        })
+        if (isValid) {
+            navigation.navigate("Email")
+        }
     }
     return (
         <SafeAreaView
@@ -103,16 +126,16 @@ const NameScreen = () => {
                             onChangeText={setFirstName}
                             autoFocus={true}
                         />
-                        {/* {error && (
-                        <Text
-                            style={[
-                                styles.errorText,
-                                { color: "red" }
-                            ]}
-                        >
-                            {error}
-                        </Text>
-                    )} */}
+                        {error && (
+                            <Text
+                                style={[
+                                    styles.errorText,
+                                    { color: "red" }
+                                ]}
+                            >
+                                {error}
+                            </Text>
+                        )}
                         {/** Last Name */}
                         <CustomTextInput
                             placeholder="Enter your last name"

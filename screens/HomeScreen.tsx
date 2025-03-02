@@ -7,7 +7,12 @@ import {
     Text,
     View
 } from "react-native"
-import React, { useLayoutEffect } from "react"
+import React, {
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useState
+} from "react"
 import { useTheme } from "@/constants/ThemeProvider"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useNavigation } from "expo-router"
@@ -16,11 +21,17 @@ import { fontFamily } from "@/constants/fonts"
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import { data } from "@/constants/data"
+import { AuthContext } from "@/context/AuthContext"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const HomeScreen = () => {
     const { theme } = useTheme()
 
     const navigation = useNavigation()
+
+    const { userId, setUserId } = useContext(AuthContext)
+
+    const [user, setUser] = useState("")
 
     {
         /**header */
@@ -80,6 +91,7 @@ const HomeScreen = () => {
             )
         })
     }, [theme])
+
     return (
         <SafeAreaView
             style={{
@@ -153,7 +165,7 @@ const HomeScreen = () => {
                     </View>
                 </View>
 
-          {/** activity and view button */}
+                {/** activity and view button */}
                 <View
                     style={{
                         padding: 13,
