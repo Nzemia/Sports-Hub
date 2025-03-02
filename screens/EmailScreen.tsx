@@ -18,7 +18,7 @@ type PasswordNavigationProp = NativeStackNavigationProp<
     "Password"
 >
 
-const RegisterScreen = () => {
+const EmailScreen = () => {
     const { theme } = useTheme()
 
     const navigation =
@@ -117,7 +117,7 @@ const RegisterScreen = () => {
     )
 }
 
-export default RegisterScreen
+export default EmailScreen
 
 const styles = StyleSheet.create({
     headerText: {

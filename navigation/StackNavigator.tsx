@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet } from "react-native"
 import React from "react"
 import { useTheme } from "@/constants/ThemeProvider"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
@@ -14,12 +14,12 @@ import ProfileScreen from "@/screens/ProfileScreen"
 import VenueInfoScreen from "@/screens/VenueInfoScreen"
 import StartScreen from "@/screens/StartScreen"
 import LoginScreen from "@/screens/LoginScreen"
-import RegisterScreen from "@/screens/RegisterScreen"
 import PasswordScreen from "@/screens/PasswordScreen"
 import NameScreen from "@/screens/NameScreen"
 import SelectImage from "@/screens/SelectImage"
 import PreFinalScreen from "@/screens/PreFinalScreen"
 import OtpScreen from "@/screens/OtpScreen"
+import EmailScreen from "@/screens/EmailScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -137,8 +137,8 @@ const StackNavigator = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                    name="Register"
-                    component={RegisterScreen}
+                    name="Email"
+                    component={EmailScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

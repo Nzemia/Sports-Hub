@@ -21,17 +21,15 @@ import { fontFamily } from "@/constants/fonts"
 import CustomButton from "@/components/Button"
 import { useNavigation } from "expo-router"
 
-
-type RegisterNavigationProp = NativeStackNavigationProp<
+type NameNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
-    "Register"
+    "Name"
 >
 
-
 const StartScreen = () => {
-    const { theme } = useTheme() 
+    const { theme } = useTheme()
 
-    const navigation = useNavigation<RegisterNavigationProp>()
+    const navigation = useNavigation<NameNavigationProp>()
 
     const {
         errorMsg,
@@ -145,7 +143,9 @@ const StartScreen = () => {
                         justifyContent: "center",
                         backgroundColor: "green"
                     }}
-                    onPress={() => navigation.navigate('Register')}
+                    onPress={() =>
+                        navigation.navigate("Name")
+                    }
                 />
             </View>
 
@@ -167,7 +167,9 @@ const StartScreen = () => {
                     Already have an account?{" "}
                 </Text>
                 <Pressable
-                onPress={() => navigation.navigate("Login")}
+                    onPress={() =>
+                        navigation.navigate("Login")
+                    }
                 >
                     <Text
                         style={[

@@ -14,12 +14,25 @@ import {
 } from "@expo/vector-icons"
 import { fontFamily } from "@/constants/fonts"
 import CustomTextInput from "@/components/TextInput"
+import { RootStackParamList } from "@/configs/global"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { useNavigation } from "expo-router"
+
+type ImageNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    "Image"
+>
 
 const PasswordScreen = () => {
     const { theme } = useTheme()
+
+    const navigation = useNavigation<ImageNavigationProp>()
+
     const [password, setPassword] = useState("")
 
-    const handleNext = () => {}
+    const handleNext = () => {
+        navigation.navigate("Image")
+    }
     return (
         <SafeAreaView
             style={{

@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
             firstName,
             lastName,
             image,
-            phoneNumber
+            //phoneNumber
         } = req.body
 
         // Check if user already exists
@@ -36,7 +36,7 @@ const registerUser = async (req, res) => {
             firstName,
             lastName,
             image,
-            phoneNumber
+            //phoneNumber
         })
 
         await newUser.save()
