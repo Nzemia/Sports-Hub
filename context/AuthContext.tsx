@@ -2,91 +2,110 @@ import React, {
     createContext,
     useEffect,
     useState,
-    ReactNode
+    ReactNode,
+    useCallback
 } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { jwtDecode } from "jwt-decode"
+import "core-js/stable/atob"
 
-interface AuthContextProps {
+interface DecodedToken {
+    userId: string
+    exp?: number
+}
+
+interface AuthContextType {
     token: string | null
     isLoading: boolean
-    login: () => void
-    register: () => void
-    setToken: React.Dispatch<
-        React.SetStateAction<string | null>
+    userId: string | null
+    upcomingGames: any[]
+    setToken: (token: string | null) => void
+    setUserId: (userId: string | null) => void
+    setUpcomingGames: React.Dispatch<
+        React.SetStateAction<any[]>
     >
 }
 
-export const AuthContext = createContext<AuthContextProps>({
+export const AuthContext = createContext<AuthContextType>({
     token: null,
     isLoading: false,
-    login: () => {},
-    register: () => {},
-    setToken: () => {}
+    userId: null,
+    upcomingGames: [],
+    setToken: () => {},
+    setUserId: () => {},
+    setUpcomingGames: () => {}
 })
 
 interface AuthProviderProps {
     children: ReactNode
 }
 
-export const AuthProvider = ({
+export const AuthProvider: React.FC<AuthProviderProps> = ({
     children
-}: AuthProviderProps) => {
+}) => {
     const [token, setToken] = useState<string | null>(null)
+    const [userId, setUserId] = useState<string | null>(
+        null
+    )
     const [isLoading, setIsLoading] =
         useState<boolean>(false)
+    const [upcomingGames, setUpcomingGames] = useState<
+        any[]
+    >([])
 
-    const login = async () => {
-        const fakeToken = "token"
-        await AsyncStorage.setItem("token", fakeToken)
-        setToken(fakeToken)
-        setIsLoading(false)
-    }
-
-    const register = async () => {
-        const fakeToken = ""
-        await AsyncStorage.setItem("token", fakeToken)
-        setToken(fakeToken)
-        setIsLoading(false)
-    }
-
-    const isLoggedIn = async () => {
+    // Check if user is logged in
+    const isLoggedIn = useCallback(async () => {
+        setIsLoading(true)
         try {
-            setIsLoading(true)
-            const userToken = await AsyncStorage.getItem(
+            const storedToken = await AsyncStorage.getItem(
                 "token"
             )
-            setToken(userToken)
-            setIsLoading(false)
+            if (storedToken) {
+                setToken(storedToken)
+            }
         } catch (error) {
-            console.log(
-                "Error checking login status",
-                error
-            )
+            console.error("Error retrieving token:", error)
+        } finally {
             setIsLoading(false)
         }
-    }
+    }, [])
+
+    // Fetch and decode user info from token
+    const fetchUser = useCallback(async () => {
+        try {
+            const storedToken = await AsyncStorage.getItem(
+                "token"
+            )
+            if (storedToken) {
+                const decodedToken: DecodedToken =
+                    jwtDecode(storedToken)
+                if (decodedToken?.userId) {
+                    setUserId(decodedToken.userId)
+                }
+            }
+        } catch (error) {
+            console.error("Error decoding token:", error)
+        }
+    }, [])
 
     useEffect(() => {
         isLoggedIn()
     }, [])
 
     useEffect(() => {
-        if (token) {
-            // trigger any navigation or side effects when token is set.
-            // console.log(
-            //     "Token set, performing navigation..."
-            // )
-        }
-    }, [token])
+        if (token) fetchUser()
+    }, [token, fetchUser])
 
     return (
         <AuthContext.Provider
             value={{
                 token,
                 isLoading,
-                login,
-                register,
-                setToken
+                userId,
+                setToken,
+                setUserId,
+                upcomingGames,
+                setUpcomingGames
             }}
         >
             {children}

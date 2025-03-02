@@ -1,6 +1,10 @@
+import { AuthProvider } from "@/context/AuthContext"
 import StackNavigator from "@/navigation/StackNavigator"
 
-
 export default function Index() {
-    return <StackNavigator />
+    return (
+        <AuthProvider>
+            <StackNavigator />
+        </AuthProvider>
+    )
 }
