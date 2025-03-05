@@ -23,6 +23,13 @@ import AntDesign from "@expo/vector-icons/AntDesign"
 import { data } from "@/constants/data"
 import { AuthContext } from "@/context/AuthContext"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { jwtDecode } from "jwt-decode"
+import axios from "axios"
+
+interface DecodedToken {
+    userId: string
+    exp?: number
+}
 
 const HomeScreen = () => {
     const { theme } = useTheme()
@@ -30,8 +37,11 @@ const HomeScreen = () => {
     const navigation = useNavigation()
 
     const { userId, setUserId } = useContext(AuthContext)
+    //console.log("token:", token)
 
-    const [user, setUser] = useState("")
+    const [user, setUser] = useState<any>("")
+
+    const [upcomingGames, setUpcomingGames] = useState([])
 
     {
         /**header */
@@ -78,19 +88,86 @@ const HomeScreen = () => {
                     />
 
                     <Pressable>
-                        <Image
-                            source={require("../assets/images/profileavatar.png")}
-                            style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 15
-                            }}
-                        />
+                        {user?.image ? (
+                            <Image
+                                source={{
+                                    uri: user?.image
+                                }}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15
+                                }}
+                            />
+                        ) : (
+                            <Image
+                                source={require("../assets/images/profileavatar.png")}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15
+                                }}
+                            />
+                        )}
                     </Pressable>
                 </View>
             )
         })
-    }, [theme])
+    }, [user, theme])
+
+    useEffect(() => {
+        fetchUser(setUser, setUserId)
+    }, [])
+
+    const fetchUser = async (
+        setUser: Function,
+        setUserId: Function
+    ) => {
+        try {
+            const token = await AsyncStorage.getItem(
+                "token"
+            )
+
+            if (!token) {
+                console.error("No token found")
+                return
+            }
+
+            // Decode token and extract userId
+            const decodedToken: { userId?: string } =
+                jwtDecode(token)
+
+            if (!decodedToken.userId) {
+                throw new Error(
+                    "User ID not found in token"
+                )
+            }
+
+            const userId = decodedToken.userId
+            setUserId(userId)
+
+            const response = await axios.get(
+                `http://10.16.9.81:3000/api/auth/user/${userId}`
+            )
+
+            if (!response.data) {
+                console.error(
+                    "User data is empty:",
+                    response.data
+                )
+                return
+            }
+
+            setUser(response.data)
+        } catch (error) {
+            console.error(
+                "Error fetching user data:",
+                error
+            )
+        }
+    }
+
+    //console.log("user", userId)
 
     return (
         <SafeAreaView
