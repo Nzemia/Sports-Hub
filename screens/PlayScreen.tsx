@@ -12,9 +12,19 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons"
 
 import { useTheme } from "@/constants/ThemeProvider"
 import { fontFamily } from "@/constants/fonts"
+import { RootStackParamList } from "@/configs/global"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { useNavigation } from "expo-router"
+
+type VenueNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    "Create"
+>
 
 const PlayScreen = () => {
     const { theme } = useTheme()
+
+    const navigation = useNavigation<VenueNavigationProp>()
 
     const [option, setOption] = useState("My Sports")
 
@@ -413,7 +423,11 @@ const PlayScreen = () => {
                     padding: 12
                 }}
             >
-                <Pressable>
+                <Pressable
+                    onPress={() =>
+                        navigation.navigate("Create")
+                    }
+                >
                     <Text
                         style={[
                             styles.createFilterSortText,

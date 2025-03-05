@@ -24,6 +24,8 @@ import PreFinalScreen from "@/screens/PreFinalScreen"
 import OtpScreen from "@/screens/OtpScreen"
 import EmailScreen from "@/screens/EmailScreen"
 import { AuthContext } from "@/context/AuthContext"
+import CreateActivity from "@/screens/CreateActivity"
+import Date from "@/components/Date"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -199,11 +201,16 @@ const StackNavigator = () => {
                     component={BottomTabs}
                     options={{ headerShown: false }}
                 />
-                {/* <Stack.Screen
-                    name="Auth"
-                    component={AuthStack}
+                <Stack.Screen
+                    name="Create"
+                    component={CreateActivity}
                     options={{ headerShown: false }}
-                /> */}
+                />
+                <Stack.Screen
+                    name="Time"
+                    component={Date}
+                    options={{ headerShown: false }}
+                />
             </Stack.Navigator>
         )
     }

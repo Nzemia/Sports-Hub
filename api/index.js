@@ -4,6 +4,7 @@ const bodyParser = require("body-parser")
 const connectDB = require("./config/db")
 
 const authRoutes = require("./routes/authRoutes")
+const gameRoutes = require("./routes/gameRoutes")
 
 const app = express()
 
@@ -12,11 +13,11 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-
 connectDB()
 
 // Mount Routes
-app.use("/api/auth", authRoutes); 
+app.use("/api/auth", authRoutes)
+app.use("/api/games", gameRoutes)
 
 // Start server
 const PORT = 3000

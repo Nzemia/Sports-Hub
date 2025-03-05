@@ -18,4 +18,7 @@ export type RootStackParamList = {
     Image: undefined
     PreFinal: undefined
     MainStack: undefined
+
+    Create: undefined
+    Time: undefined
 }
