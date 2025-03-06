@@ -19,6 +19,8 @@ export type RootStackParamList = {
     PreFinal: undefined
     MainStack: undefined
 
-    Create: undefined
+    //Create: undefined
+    Create: { taggedVenue?: string; timeInterval?: string }
+    TagVenue: undefined
     Time: undefined
 }

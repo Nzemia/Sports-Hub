@@ -26,7 +26,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { jwtDecode } from "jwt-decode"
 import axios from "axios"
 
-
 const HomeScreen = () => {
     const { theme } = useTheme()
 
@@ -143,7 +142,7 @@ const HomeScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.9.81:3000/api/auth/user/${userId}`
+                `http://10.16.9.59:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {

@@ -4,9 +4,7 @@ import {
     Text,
     View,
     Pressable,
-    Alert,
-    Modal,
-    Platform
+    Alert
 } from "react-native"
 import React, {
     useContext,
@@ -32,10 +30,15 @@ import { AuthContext } from "@/context/AuthContext"
 import moment from "moment"
 import axios from "axios"
 import { useRoute } from "@react-navigation/native"
-import DateTimePicker from "@react-native-community/datetimepicker"
 import DatePickerModal from "@/components/Modal"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { RootStackParamList } from "@/configs/global"
+import DateTimePicker from "@react-native-community/datetimepicker"
+
+type TagVenueNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    "TagVenue"
+>
 
 type TimeNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -47,26 +50,31 @@ const CreateActivity = () => {
     const navigation = useNavigation()
     const timeNavigation =
         useNavigation<TimeNavigationProp>()
+    const tagVenueNavigation =
+        useNavigation<TagVenueNavigationProp>()
     const route = useRoute()
 
     const [sport, setSport] = useState("")
     const [area, setArea] = useState("")
-    const [taggedVenue, setTaggedVenue] = useState(null)
+    const [taggedVenue, setTaggedVenue] = useState<
+        string | null
+    >(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [date, setDate] = useState("")
-    const [time, setTime] = useState("")
-    const [showTimePicker, setShowTimePicker] =
-        useState(false)
     const [noOfPlayers, setNoOfPlayers] = useState("")
     const [timeInterval, setTimeInterval] = useState("")
+
     const [selected, setSelected] = useState("Public")
     const [
         additionalInstructions,
         setAdditionalInstructions
     ] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-
-    const [selectedDate, setSelectedDate] = useState("")
+    const [selectedTime, setSelectedTime] = useState(
+        new Date()
+    )
+    const [showTimePicker, setShowTimePicker] =
+        useState(false)
     const selectDate = (selectedDate: string) => {
         setDate(selectedDate)
     }
@@ -74,40 +82,15 @@ const CreateActivity = () => {
     const { userId } = useContext(AuthContext)
     //console.log("userID", userId)
 
-    //generate dates
-    const generateDates = () => {
-        const dates = []
-        for (let i = 0; i < 10; i++) {
-            const date = moment().add(i, "days")
-            let displayDate
-            if (i === 0) {
-                displayDate = "Today"
-            } else if (i === 1) {
-                displayDate = "Tomorrow"
-            } else if (i === 2) {
-                displayDate = "Day after"
-            } else {
-                displayDate = date.format("Do MMMM")
-            }
-            dates.push({
-                id: i.toString(),
-                displayDate,
-                dayOfWeek: date.format("dddd"),
-                actualDate: date.format("Do MMMM")
-            })
-        }
-        return dates
-    }
-    const dates = generateDates()
-    //console.log("Dates", dates)
-
     useEffect(() => {
-        if ((route.params as any)?.timeInterval) {
-            setTimeInterval(
-                (route.params as any).timeInterval
-            )
+        if (route.params?.taggedVenue) {
+            // console.log(
+            //     "Tagged Venue:",
+            route.params.taggedVenue
+
+            setArea(route.params.taggedVenue)
         }
-    }, [route.params])
+    }, [route.params?.taggedVenue])
 
     const createGame = async () => {
         try {
@@ -123,7 +106,7 @@ const CreateActivity = () => {
             }
 
             const response = await axios.post(
-                "http://10.16.9.81.3000/api/games/creategame",
+                "http://10.16.9.59.3000/api/games/creategame",
                 gameData
             )
             console.log("Game created:", response.data)
@@ -171,31 +154,54 @@ const CreateActivity = () => {
         }
     }
 
-    useEffect(() => {
-        if ((route.params as any)?.taggedVenue) {
-            setTaggedVenue(
-                (route.params as any).taggedVenue
-            )
+    //generate dates
+    const generateDates = () => {
+        const dates = []
+        for (let i = 0; i < 10; i++) {
+            const date = moment().add(i, "days")
+            let displayDate
+            if (i === 0) {
+                displayDate = "Today"
+            } else if (i === 1) {
+                displayDate = "Tomorrow"
+            } else if (i === 2) {
+                displayDate = "Day after"
+            } else {
+                displayDate = date.format("Do MMMM")
+            }
+            dates.push({
+                id: i.toString(),
+                displayDate,
+                dayOfWeek: date.format("dddd"),
+                actualDate: date.format("Do MMMM")
+            })
         }
-    }, [route.params])
+        return dates
+    }
+    const dates = generateDates()
+    //console.log("Dates", dates)
+
+    const handleConfirmTime = (
+        event: any,
+        selected: Date | undefined
+    ) => {
+        if (selected) {
+            setSelectedTime(selected)
+            const formattedTime = formatTime(selected)
+            setTimeInterval(formattedTime)
+        }
+        setShowTimePicker(false)
+    }
+
+    const formatTime = (date: Date) => {
+        return date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        })
+    }
 
     //console.log("tagged", route?.params?.taggedVenue)
-
-    const handleTimeChange = (
-        event: any,
-        selectedTime?: Date
-    ) => {
-        setShowTimePicker(false)
-        if (selectedTime) {
-            const formattedTime =
-                selectedTime.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true
-                })
-            setTime(formattedTime)
-        }
-    }
 
     return (
         <SafeAreaView
@@ -287,9 +293,11 @@ const CreateActivity = () => {
 
                     {/** area */}
                     <Pressable
-                        // onPress={() =>
-                        //     navigation.navigate("Sport")
-                        // }
+                        onPress={() =>
+                            tagVenueNavigation.navigate(
+                                "TagVenue"
+                            )
+                        }
                         style={{
                             flexDirection: "row",
                             alignItems: "center",
@@ -315,8 +323,8 @@ const CreateActivity = () => {
                             <CustomTextInput
                                 value={
                                     area
-                                    // ? area
-                                    // : taggedVenue
+                                        ? area
+                                        : taggedVenue
                                 }
                                 onChangeText={setArea}
                                 style={{
@@ -327,6 +335,7 @@ const CreateActivity = () => {
                                 placeholder={
                                     "Locality or venue name"
                                 }
+                                editable={false}
                             />
                         </View>
                     </Pressable>
@@ -396,8 +405,11 @@ const CreateActivity = () => {
 
                     {/** time */}
                     <Pressable
+                        // onPress={() =>
+                        //     timeNavigation.navigate("Time")
+                        // }
                         onPress={() =>
-                            timeNavigation.navigate("Time")
+                            setShowTimePicker(true)
                         }
                         style={{
                             flexDirection: "row",
@@ -422,8 +434,10 @@ const CreateActivity = () => {
                                 Time
                             </Text>
                             <CustomTextInput
-                                value={time}
-                                onChangeText={setTime}
+                                value={timeInterval}
+                                onChangeText={
+                                    setTimeInterval
+                                }
                                 style={{
                                     marginTop: 7,
                                     fontSize: 15
@@ -438,8 +452,17 @@ const CreateActivity = () => {
                                         ? timeInterval
                                         : "Pick Exact Time"
                                 }
+                                editable={false}
                             />
                         </View>
+                        {showTimePicker && (
+                            <DateTimePicker
+                                value={selectedTime}
+                                mode="time"
+                                display="spinner"
+                                onChange={handleConfirmTime}
+                            />
+                        )}
                     </Pressable>
 
                     <Text
@@ -867,86 +890,6 @@ const CreateActivity = () => {
                     />
                 </View>
 
-                {/* <Modal
-                    visible={isModalVisible}
-                    onBackdropPress={closeModal}
-                    onBackButtonPress={closeModal}
-                    swipeDirection={["up", "down"]}
-                    onSwipeComplete={closeModal}
-                    swipeThreshold={200}
-                    propagateSwipe
-                    style={styles.modal}
-                >
-                    <ModalContent
-                        style={{
-                            width: "100%",
-                            height: 400,
-                            backgroundColor: "white"
-                        }}
-                    >
-                        <View>
-                            <Text
-                                style={{
-                                    textAlign: "center",
-                                    fontSize: 16,
-                                    fontWeight: "bold"
-                                }}
-                            >
-                                Choose date/ time to rehost
-                            </Text>
-
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    alignItems: "center",
-                                    gap: 15,
-                                    flexWrap: "wrap",
-                                    marginVertical: 20
-                                }}
-                            >
-                                {dates?.map(
-                                    (item, index) => (
-                                        <Pressable
-                                            onPress={() =>
-                                                selectDate(
-                                                    item?.actualDate
-                                                )
-                                            }
-                                            style={{
-                                                padding: 10,
-                                                borderRadius: 10,
-                                                borderColor:
-                                                    "#E0E0E0",
-                                                borderWidth: 1,
-                                                width: "30%",
-                                                justifyContent:
-                                                    "center",
-                                                alignItems:
-                                                    "center"
-                                            }}
-                                        >
-                                            <Text>
-                                                {
-                                                    item?.displayDate
-                                                }
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    color: "gray",
-                                                    marginTop: 8
-                                                }}
-                                            >
-                                                {
-                                                    item?.dayOfWeek
-                                                }
-                                            </Text>
-                                        </Pressable>
-                                    )
-                                )}
-                            </View>
-                        </View>
-                    </ModalContent>
-                </Modal> */}
                 <DatePickerModal
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}

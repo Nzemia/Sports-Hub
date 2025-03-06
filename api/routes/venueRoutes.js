@@ -28,7 +28,7 @@ router.post("/add-venues", async (req, res) => {
 })
 
 // Fetch all venues
-router.get("/venues", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const venues = await Venue.find()
         res.status(200).json(venues)

@@ -5,7 +5,6 @@ const connectDB = require("./config/db")
 
 const authRoutes = require("./routes/authRoutes")
 const gameRoutes = require("./routes/gameRoutes")
-const addVenues = require("./constants/data")
 const venueRoutes = require("./routes/venueRoutes")
 
 const app = express()
@@ -27,4 +26,3 @@ const PORT = 3000
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })
-

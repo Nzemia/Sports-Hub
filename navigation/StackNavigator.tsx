@@ -7,11 +7,11 @@ import React, { useContext } from "react"
 import { useTheme } from "@/constants/ThemeProvider"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import HomeScreen from "@/screens/HomeScreen"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import AntDesign from "@expo/vector-icons/AntDesign"
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons"
 
+import HomeScreen from "@/screens/HomeScreen"
 import PlayScreen from "@/screens/PlayScreen"
 import BookScreen from "@/screens/BookScreen"
 import ProfileScreen from "@/screens/ProfileScreen"
@@ -25,7 +25,8 @@ import OtpScreen from "@/screens/OtpScreen"
 import EmailScreen from "@/screens/EmailScreen"
 import { AuthContext } from "@/context/AuthContext"
 import CreateActivity from "@/screens/CreateActivity"
-import Date from "@/components/Date"
+import TagVenueScreen from "@/screens/TagVenueScreen"
+import SelectTimeScreen from "@/screens/SelectTimeScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -207,8 +208,13 @@ const StackNavigator = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="TagVenue"
+                    component={TagVenueScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="Time"
-                    component={Date}
+                    component={SelectTimeScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

@@ -81,7 +81,7 @@ const LoginScreen = () => {
 
         axios
             .post(
-                "http://10.16.9.81:3000/api/auth/login",
+                "http://10.16.9.59:3000/api/auth/login",
                 user
             )
             .then(response => {

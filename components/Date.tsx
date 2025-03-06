@@ -12,7 +12,7 @@ const Date = ({
     onSelectDate,
     selected,
     setSelectedTime
-}: any) => {
+}) => {
     const day =
         moment(date).format("YYYY-MM-DD") ===
         moment().format("YYYY-MM-DD")

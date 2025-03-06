@@ -1,7 +1,8 @@
 const venues = [
     {
         name: "147 One Four Seven Snooker, Billiards and Pool Sports Academy",
-        rating: 4,
+        near: "Machakos Swimming Pool",
+        rating: 4.8,
         deferLink: "https://playo.page.link/ry8TT",
         fullLink:
             "https://playo.co/venue/?venueId=4ec5b58f-d58f-4ce1-8c84-2caa63007ecc",
@@ -81,7 +82,8 @@ const venues = [
     },
     {
         name: "OvalNet Badminton Academy - Sahakar Nagar",
-        rating: 4,
+        near: "Ololude Bar",
+        rating: 3.2,
         deferLink: "https://z34v4.app.goo.gl/MAAX",
         fullLink:
             "https://playo.co/venue/?venueId=afbe7186-2f86-4215-8715-4b967f166b09",
@@ -162,7 +164,8 @@ const venues = [
     },
     {
         name: "OvalNet Badminton Academy - Sahakar Nagar",
-        rating: 4,
+        near: "Kwa Vonza Road",
+        rating: 5,
         deferLink: "https://z34v4.app.goo.gl/MAAX",
         fullLink:
             "https://playo.co/venue/?venueId=afbe7186-2f86-4215-8715-4b967f166b09",
@@ -243,7 +246,8 @@ const venues = [
     },
     {
         name: "Play Zone - Sahakarnagar (Shree Vayu Badminton Arena)",
-        rating: 4,
+        near: "Talanta sports",
+        rating: 2.8,
         fullLink:
             "https://playo.co/venue?venueId=6bb450c0-318b-49e5-b7c0-c02a37d34ef8",
         deferLink: "https://z34v4.app.goo.gl/4Kqo",
@@ -324,7 +328,8 @@ const venues = [
     },
     {
         name: "VIN Badminton",
-        rating: 4,
+        near: "Machakos Swimming Pool",
+        rating: 2.9,
         deferLink: "https://z34v4.app.goo.gl/RTF4",
         fullLink:
             "https://playo.co/venue/?venueId=37f3675b-dfd2-4f30-8506-a3883abef902",
@@ -405,6 +410,7 @@ const venues = [
     },
     {
         name: "Serve & Smash Badminton Academy",
+        near: "Machakos Swimming Pool",
         rating: 4,
         fullLink:
             "https://playo.co/venue?venueId=a0c6ceb4-d09b-4fcf-bafd-6c949a55590c",
@@ -487,6 +493,4 @@ const venues = [
     // Add more venues as need
 ]
 
-
-module.exports = venues 
-
+module.exports = venues
