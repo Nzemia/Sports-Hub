@@ -16,26 +16,38 @@ import { useNavigation } from "expo-router"
 import { RootStackParamList } from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 
-type GoBackNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    "Create"
->
+
+interface Venue {
+    _id: string
+    name: string
+    image: string
+    near?: string
+    rating?: number
+}
+
+type TagVenueScreenNavigationProp =
+    NativeStackNavigationProp<
+        RootStackParamList,
+        "TagVenue"
+    >
 
 const TagVenueScreen = () => {
     const { theme } = useTheme()
 
-    const navigation = useNavigation()
 
-    const goBack = useNavigation<GoBackNavigationProp>()
 
-    const [venues, setVenues] = useState([])
-    const [taggedVenue, setTaggedVenue] = useState(null)
+    const navigation =
+        useNavigation<TagVenueScreenNavigationProp>()
+
+    const [venues, setVenues] = useState<Venue[]>([])
+    const [taggedVenue, setTaggedVenue] =
+        useState<Venue | null>(null)
 
     useEffect(() => {
         const fetchVenues = async () => {
             try {
                 const response = await axios.get(
-                    "http://10.16.9.59:3000/api/venues"
+                    "http://10.16.14.162:3000/api/venues"
                 )
                 setVenues(response.data)
             } catch (error) {
@@ -45,24 +57,24 @@ const TagVenueScreen = () => {
                 )
             }
         }
-
         fetchVenues()
     }, [])
-    //console.log("venues", venues)
+
+
+
 
     useEffect(() => {
         if (taggedVenue) {
-            //console.log("taggedVenue")
-            goBack.navigate({ taggedVenue })
+            navigation.navigate("Create", { taggedVenue })
         }
     }, [taggedVenue, navigation])
 
-    const handleSelectVenue = (venueName: string) => {
-        goBack.navigate("Create", {
-            taggedVenue: venueName
+    const handleSelectVenue = (venue: Venue) => {
+        navigation.navigate("Create", {
+            taggedVenue: venue,
+            
         })
     }
-
     return (
         <SafeAreaView
             style={{
@@ -110,10 +122,10 @@ const TagVenueScreen = () => {
             <FlatList
                 data={venues}
                 keyExtractor={item => item._id}
-                renderItem={({ item }) => (
+                renderItem={({ item }) => (             
                     <Pressable
                         onPress={() =>
-                            handleSelectVenue(item?.name)
+                            handleSelectVenue(item)
                         }
                         style={{
                             padding: 10,
@@ -169,9 +181,14 @@ const TagVenueScreen = () => {
                                     </Text>
 
                                     <Text
-                                        style={[styles.ratingText, { color: theme.text }]}
+                                        style={[
+                                            styles.ratingText,
+                                            {
+                                                color: theme.text
+                                            }
+                                        ]}
                                     >
-                                       {item?.rating}
+                                        {item?.rating}
                                     </Text>
                                 </View>
 
@@ -216,6 +233,6 @@ const styles = StyleSheet.create({
     },
     ratingText: {
         marginTop: 8,
-        fontFamily: fontFamily.regular,
+        fontFamily: fontFamily.regular
     }
 })

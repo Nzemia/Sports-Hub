@@ -1,4 +1,3 @@
-//@ts-nocheck    
 import {
     Button,
     Pressable,
@@ -14,36 +13,37 @@ import React, {
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useNavigation } from "expo-router"
 import { Feather, Ionicons } from "@expo/vector-icons"
-import { RootStackParamList } from "@/configs/global"
-import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 
 import { useTheme } from "@/constants/ThemeProvider"
 import { fontFamily } from "@/constants/fonts"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { RootStackParamList } from "@/configs/global"
 
-type TimeNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    "Create"
->
+type TimeSlot = {
+    id: string
+    type: string
+    timings: string
+    icon: JSX.Element
+}
+
+type Time = Date | null
+
+type SelectTimeScreenNavigationProp =
+    NativeStackNavigationProp<
+        RootStackParamList,
+        "SelectTime"
+    >
 
 const SelectTimeScreen = () => {
     const { theme } = useTheme()
 
-    const navigation = useNavigation<TimeNavigationProp>()
+    const navigation =
+        useNavigation<SelectTimeScreenNavigationProp>()
 
-    const [time, setTime] = useState("")
-    const [startTime, setStartTime] = useState(null)
-    const [endTime, setEndTime] = useState(null)
-
-    const [
-        isStartTimePickerVisible,
-        setStartTimePickerVisibility
-    ] = useState(false)
-    const [
-        isEndTimePickerVisible,
-        setEndTimePickerVisibility
-    ] = useState(false)
-
+    const [time, setTime] = useState<string>("")
+    const [startTime, setStartTime] = useState<Time>(null)
+    const [endTime, setEndTime] = useState<Time>(null)
     const times = [
         {
             id: "0",
@@ -94,18 +94,17 @@ const SelectTimeScreen = () => {
             )
         }
     ]
-    const selectTime = item => {
-        setTime(item)
+    const selectTime = (item: TimeSlot) => {
+        setTime(item.type)
         navigation.goBack()
     }
+
     useEffect(() => {
-        console.log(startTime)
-        console.log(endTime)
         if (startTime && endTime) {
             const formattedStartTime = formatTime(startTime)
             const formattedEndTime = formatTime(endTime)
             const timeInterval = `${formattedStartTime} - ${formattedEndTime}`
-            navigation.goBack({ timeInterval })
+            navigation.navigate("Create", { timeInterval })
         }
     }, [startTime, endTime, navigation])
 
@@ -124,6 +123,16 @@ const SelectTimeScreen = () => {
         })
     }, [])
 
+    const [
+        isStartTimePickerVisible,
+        setStartTimePickerVisibility
+    ] = useState(false)
+    const [
+        isEndTimePickerVisible,
+        setEndTimePickerVisibility
+    ] = useState(false)
+    
+
     const showStartTimePicker = () => {
         setStartTimePickerVisibility(true)
     }
@@ -140,38 +149,33 @@ const SelectTimeScreen = () => {
         setEndTimePickerVisibility(false)
     }
 
-    const handleConfirmStartTime = (time: any) => {
+    const handleConfirmStartTime = (time: Date) => {
         setStartTime(time)
         hideStartTimePicker()
     }
 
-    const handleConfirmEndTime = (time: any) => {
-        setEndTime(time)
-        hideEndTimePicker()
+const handleConfirmEndTime = (time: Date) => {
+    setEndTime(time)
+    hideEndTimePicker()
 
-        if (startTime) {
-            const formattedStartTime = formatTime(startTime)
-            const formattedEndTime = formatTime(time)
-            const timeInterval = `${formattedStartTime} - ${formattedEndTime}`
-
-            
-            navigation.navigate("Create", {
-                timeInterval
-            })
-            navigation.goBack()
-        }
+    if (startTime) {
+        const formattedStartTime = formatTime(startTime)
+        const formattedEndTime = formatTime(time)
+        const timeInterval = `${formattedStartTime} - ${formattedEndTime}`
+        navigation.navigate("Create", { timeInterval })
     }
+}
 
-    const formatTime = (time: any) => {
-        if (!time) return "Select Time"
-        const hours = time.getHours()
-        const minutes = time.getMinutes()
-        const ampm = hours >= 12 ? "PM" : "AM"
-        const formattedHours = hours % 12 || 12
-        const formattedMinutes =
-            minutes < 10 ? `0${minutes}` : minutes
-        return `${formattedHours}:${formattedMinutes} ${ampm}`
-    }
+const formatTime = (time: Time) => {
+    if (!time) return "Select Time"
+    const hours = time.getHours()
+    const minutes = time.getMinutes()
+    const ampm = hours >= 12 ? "PM" : "AM"
+    const formattedHours = hours % 12 || 12
+    const formattedMinutes =
+        minutes < 10 ? `0${minutes}` : minutes
+    return `${formattedHours}:${formattedMinutes} ${ampm}`
+}
 
     return (
         <SafeAreaView
@@ -191,9 +195,7 @@ const SelectTimeScreen = () => {
             >
                 {times.map((item, index) => (
                     <Pressable
-                        onPress={() =>
-                            selectTime(item.type)
-                        }
+                        onPress={() => selectTime(item)}
                         key={index}
                         style={[
                             styles.iconContainer,

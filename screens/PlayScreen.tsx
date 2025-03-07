@@ -425,7 +425,7 @@ const PlayScreen = () => {
             >
                 <Pressable
                     onPress={() =>
-                        navigation.navigate("Create")
+                        navigation.navigate("Create", {})
                     }
                 >
                     <Text

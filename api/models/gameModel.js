@@ -16,8 +16,8 @@ const gameSchema = new Schema(
             required: true
         },
         time: {
-            type: String,
-            required: true
+            type: String
+            //required: true
         },
         activityAccess: {
             type: String,
@@ -77,7 +77,7 @@ const gameSchema = new Schema(
         },
         price: {
             type: Number,
-            default: 0 
+            default: 0
         }
     },
     { timestamps: true }

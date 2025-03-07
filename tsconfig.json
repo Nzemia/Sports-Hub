@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "screens/SelectTimeScreen.tsx", "screens/CreateActivity.tsx", "screens/TagVenueScreen.tsx", "components/Date.js", "app/index.tsx", "navigation/StackNavigator.tsx", "context/AuthContext.tsx"  ]
 }

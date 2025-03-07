@@ -208,6 +208,11 @@ const StackNavigator = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="Play"
+                    component={PlayScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="TagVenue"
                     component={TagVenueScreen}
                     options={{ headerShown: false }}

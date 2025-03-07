@@ -28,13 +28,13 @@ const seedVenues = async () => {
             })
             if (!existingVenue) {
                 await Venue.create(venueData)
-                console.log(
-                    `Venue '${venueData.name}' added`
-                )
+                // console.log(
+                //     `Venue '${venueData.name}' added`
+                // )
             } else {
-                console.log(
-                    `Venue '${venueData.name}' already exists. Skipping.`
-                )
+                // console.log(
+                //     `Venue '${venueData.name}' already exists. Skipping.`
+                // )
             }
         }
     } catch (error) {
