@@ -35,7 +35,6 @@ router.post("/createGame", async (req, res) => {
     }
 })
 
-// Fetch all upcoming games
 router.get("/", async (req, res) => {
     try {
         const games = await Game.find({})
@@ -43,15 +42,50 @@ router.get("/", async (req, res) => {
             .populate("players", "image firstName lastName")
 
         const currentDate = moment()
+
+        // Filter games based on current date and time
         const filteredGames = games.filter(game => {
+            const gameDate = moment(game.date, "Do MMMM")
+
+            //console.log("game Date", gameDate)
+            const gameTime = game.time.split(" - ")[0]
+            console.log("game time", gameTime)
             const gameDateTime = moment(
-                `${game.date} ${game.time}`,
-                "YYYY-MM-DD HH:mm"
+                `${gameDate.format(
+                    "YYYY-MM-DD"
+                )} ${gameTime}`,
+                "YYYY-MM-DD h:mm A"
             )
+
+            //console.log("gameDateTime", gameDateTime)
+
             return gameDateTime.isAfter(currentDate)
         })
 
-        res.json(filteredGames)
+        const formattedGames = filteredGames.map(game => ({
+            _id: game._id,
+            sport: game.sport,
+            date: game.date,
+            time: game.time,
+            area: game.area,
+            players: game.players
+                .filter(player => player)
+                .map(player => ({
+                    _id: player._id,
+                    imageUrl: player.image,
+                    name: `${player.firstName} ${player.lastName}`
+                })),
+            totalPlayers: game.totalPlayers,
+            queries: game.queries,
+            requests: game.requests,
+            isBooked: game.isBooked,
+            adminName: game.admin
+                ? `${game.admin.firstName} ${game.admin.lastName}`
+                : "Unknown",
+            adminUrl: game.admin ? game.admin.image : null,
+            matchFull: game.matchFull
+        }))
+        res.json(formattedGames)
     } catch (err) {
         console.error(err)
         res.status(500).json({

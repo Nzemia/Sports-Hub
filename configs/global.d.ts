@@ -26,4 +26,7 @@ export type RootStackParamList = {
     TagVenue: undefined
     Time: undefined
     Play: undefined
+    Game: {
+        item: GameItem
+    }
 }
