@@ -24,6 +24,7 @@ import { useFocusEffect, useNavigation } from "expo-router"
 import { AuthContext } from "@/context/AuthContext"
 import axios from "axios"
 import Game from "@/components/Game"
+import UpComingGame from "@/components/UpComingGame"
 
 type VenueNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -37,8 +38,9 @@ const PlayScreen = () => {
 
     const [option, setOption] = useState("My Sports")
     const [sport, setSport] = useState("Chess")
-    const [games, setGames] = useState("")
+    const [games, setGames] = useState([])
     const [user, setUser] = useState("")
+    const [upcomingGames, setUpcomingGames] = useState([])
 
     const { userId } = useContext(AuthContext)
 
@@ -57,6 +59,27 @@ const PlayScreen = () => {
         }
     }
     //console.log("games", games)
+
+    useEffect(() => {
+        if (userId) {
+            fetchUpcomingGames()
+        }
+    }, [userId])
+    const fetchUpcomingGames = async () => {
+        try {
+            console.log("user id", userId)
+            const response = await axios.get(
+                `http://10.16.14.162:3000/api/games/upcoming/${userId}`
+            )
+            setUpcomingGames(response.data)
+        } catch (error) {
+            console.error(
+                "Failed to fetch upcoming games:",
+                error
+            )
+        }
+    }
+    //console.log("upcoming games", upcomingGames)
 
     return (
         <SafeAreaView
@@ -515,7 +538,7 @@ const PlayScreen = () => {
                     )}
                 />
             )}
-{/* 
+            
             {option == "Calendar" && (
                 <FlatList
                     data={upcomingGames}
@@ -527,7 +550,7 @@ const PlayScreen = () => {
                         paddingBottom: 20
                     }}
                 />
-            )} */}
+            )}
         </SafeAreaView>
     )
 }

@@ -95,16 +95,40 @@ router.get("/", async (req, res) => {
 })
 
 // Fetch user's upcoming games
-router.get("/upcoming", async (req, res) => {
+router.get("/upcoming/:userId", async (req, res) => {
     try {
-        const userId = req.user.id
+        const userId = req.params.userId
         const games = await Game.find({
             $or: [{ admin: userId }, { players: userId }]
         })
             .populate("admin")
             .populate("players", "image firstName lastName")
 
-        res.json(games)
+        const formattedGames = games.map(game => ({
+            _id: game._id,
+            sport: game.sport,
+            date: game.date,
+            time: game.time,
+            area: game.area,
+            players: game.players
+                .filter(player => player)
+                .map(player => ({
+                    _id: player._id,
+                    imageUrl: player.image,
+                    name: `${player.firstName} ${player.lastName}`
+                })),
+            totalPlayers: game.totalPlayers,
+            queries: game.queries,
+            requests: game.requests,
+            isBooked: game.isBooked,
+            adminName: game.admin
+                ? `${game.admin.firstName} ${game.admin.lastName}`
+                : "Unknown",
+            adminUrl: game.admin ? game.admin.image : null,
+            matchFull: game.matchFull
+        }))
+
+        res.json(formattedGames)
     } catch (err) {
         console.error(err)
         res.status(500).json({
