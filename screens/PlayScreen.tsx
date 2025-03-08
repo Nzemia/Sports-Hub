@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
     FlatList,
     Image,
@@ -25,33 +26,73 @@ import { AuthContext } from "@/context/AuthContext"
 import axios from "axios"
 import Game from "@/components/Game"
 import UpComingGame from "@/components/UpComingGame"
+import { RouteProp, useRoute } from "@react-navigation/native"
 
-type VenueNavigationProp = NativeStackNavigationProp<
+// Define interfaces at the top level
+interface Game {
+    _id: string
+    sport: string
+    date: string
+    time: string
+    area: string
+    players: Player[]
+    totalPlayers: number
+    adminName: string
+    adminUrl: string
+    matchFull: boolean
+}
+
+interface Player {
+    _id: string
+    firstName: string
+    lastName: string
+    image: string
+}
+
+interface User {
+    _id: string
+    firstName: string
+    lastName: string
+    image: string
+}
+
+type PlayScreenNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    "Create"
+>
+type PlayScreenRouteProp = RouteProp<
     RootStackParamList,
     "Create"
 >
 
-const PlayScreen = () => {
+const PlayScreen: React.FC = () => {
     const { theme } = useTheme()
+    const navigation =
+        useNavigation<PlayScreenNavigationProp>()
+    const route = useRoute<PlayScreenRouteProp>()
 
-    const navigation = useNavigation<VenueNavigationProp>()
-
-    const [option, setOption] = useState("My Sports")
-    const [sport, setSport] = useState("Chess")
-    interface Game {
-        _id: string
-    }
+    const [sport, setSport] = useState<string>("Chess")
     const [games, setGames] = useState<Game[]>([])
-    const [user, setUser] = useState("")
+    const [user, setUser] = useState<User | null>(null)
     const [upcomingGames, setUpcomingGames] = useState<
         Game[]
     >([])
+    const initialOption =
+        route.params?.initialOption || "My Sports"
+    const [option, setOption] =
+        useState<string>(initialOption)
 
     const { userId } = useContext(AuthContext)
 
     useEffect(() => {
         fetchGames()
     }, [])
+
+    useEffect(() => {
+        if (initialOption) {
+            setOption(initialOption)
+        }
+    }, [initialOption])
 
     const fetchGames = async () => {
         try {
@@ -70,6 +111,34 @@ const PlayScreen = () => {
             fetchUpcomingGames()
         }
     }, [userId])
+
+    useEffect(() => {
+        if (userId) {
+            fetchUser()
+        }
+    }, [userId])
+
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get<User>(
+                `http://10.16.13.39:3000/api/auth/user/${userId}`
+            )
+            setUser(response.data)
+        } catch (error) {
+            console.error(
+                "Error fetching user data:",
+                error
+            )
+        }
+    }
+    useFocusEffect(
+        useCallback(() => {
+            if (userId) {
+                fetchGames()
+            }
+        }, [userId])
+    )
+
     const fetchUpcomingGames = async () => {
         try {
             //console.log("user id", userId)
@@ -144,15 +213,34 @@ const PlayScreen = () => {
                             color={theme.text}
                         />
 
-                        <Pressable>
-                            <Image
-                                source={require("../assets/images/profileavatar.png")}
-                                style={{
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 15
-                                }}
-                            />
+                        <Pressable
+                            onPress={() =>
+                                navigation.navigate(
+                                    "Profile"
+                                )
+                            }
+                        >
+                            {user?.image ? (
+                                <Image
+                                    source={{
+                                        uri: user?.image
+                                    }}
+                                    style={{
+                                        width: 30,
+                                        height: 30,
+                                        borderRadius: 15
+                                    }}
+                                />
+                            ) : (
+                                <Image
+                                    source={require("../assets/images/profileavatar.png")}
+                                    style={{
+                                        width: 30,
+                                        height: 30,
+                                        borderRadius: 15
+                                    }}
+                                />
+                            )}
                         </Pressable>
                     </View>
                 </View>
@@ -530,8 +618,8 @@ const PlayScreen = () => {
                 </View>
             </View>
 
-            {option == "My Sports" && (
-                <FlatList
+            {option === "My Sports" && (
+                <FlatList<Game>
                     showsVerticalScrollIndicator={false}
                     data={games}
                     contentContainerStyle={{
@@ -544,8 +632,8 @@ const PlayScreen = () => {
                 />
             )}
 
-            {option == "Calendar" && (
-                <FlatList
+            {option === "Calendar" && (
+                <FlatList<Game>
                     data={upcomingGames}
                     keyExtractor={item => item._id}
                     renderItem={({ item }) => (

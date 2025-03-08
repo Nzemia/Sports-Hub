@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
     Image,
     Pressable,
@@ -5,7 +6,7 @@ import {
     Text,
     View
 } from "react-native"
-import React from "react"
+import React, { useContext } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import {
@@ -16,13 +17,19 @@ import { RootStackParamList } from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useNavigation } from "expo-router"
 import { fontFamily } from "@/constants/fonts"
+import { AuthContext } from "@/context/AuthContext"
 
 interface Player {
     name: string
     imageUrl: string
 }
 
+interface RequestItem {
+    userId: string
+}
+
 interface GameItem {
+    _id: string
     adminUrl: string
     adminName: string
     players: Player[]
@@ -31,6 +38,8 @@ interface GameItem {
     time: string
     area: string
     matchFull: boolean
+    isUserAdmin: boolean
+    requests: RequestItem[]
 }
 
 interface GameProps {
@@ -43,13 +52,14 @@ type GameScreenNavigationProp = NativeStackNavigationProp<
     "Game"
 >
 
-const Game: React.FC<GameProps> = ({
-    item,
-    isUserInRequests = false
-}) => {
+const Game: React.FC<GameProps> = ({ item }) => {
     const { theme } = useTheme()
     const navigation =
         useNavigation<GameScreenNavigationProp>()
+    const { userId, setUserId } = useContext(AuthContext)
+    const isUserInRequests = item?.requests.some(
+        request => request.userId === userId
+    )
     return (
         <SafeAreaView
             style={{
@@ -130,8 +140,8 @@ const Game: React.FC<GameProps> = ({
                                             <Image
                                                 key={index}
                                                 style={{
-                                                    width: 44,
-                                                    height: 44,
+                                                    width: 30,
+                                                    height: 30,
                                                     borderRadius: 22,
                                                     marginLeft:
                                                         -7
@@ -164,7 +174,7 @@ const Game: React.FC<GameProps> = ({
 
                         <View
                             style={{
-                                paddingHorizontal: 10,
+                                paddingHorizontal: 8,
                                 paddingVertical: 6,
                                 backgroundColor: "#fffbde",
                                 borderRadius: 8,
@@ -219,18 +229,21 @@ const Game: React.FC<GameProps> = ({
                             </Text>
                         </View>
 
-                        {item?.matchFull && (
-                            <Image
-                                style={{
-                                    width: 100,
-                                    height: 70,
-                                    resizeMode: "contain"
-                                }}
-                                source={{
-                                    uri: "https://playo.co/_next/image?url=https%3A%2F%2Fplayo-website.gumlet.io%2Fplayo-website-v3%2Fmatch_full.png&w=256&q=75"
-                                }}
-                            />
-                        )}
+                        <View>
+                            {item?.matchFull && (
+                                <Image
+                                    style={{
+                                        width: 100,
+                                        height: 70,
+                                        resizeMode:
+                                            "contain"
+                                    }}
+                                    source={{
+                                        uri: "https://playo.co/_next/image?url=https%3A%2F%2Fplayo-website.gumlet.io%2Fplayo-website-v3%2Fmatch_full.png&w=256&q=75"
+                                    }}
+                                />
+                            )}
+                        </View>
                     </View>
 
                     <View
@@ -288,7 +301,7 @@ const Game: React.FC<GameProps> = ({
                             <View
                                 style={{
                                     backgroundColor:
-                                        "#4ba143",
+                                        "yellow",
                                     paddingHorizontal: 10,
                                     paddingVertical: 4,
                                     borderRadius: 5,
@@ -300,7 +313,7 @@ const Game: React.FC<GameProps> = ({
                                         style={[
                                             styles.requestedText,
                                             {
-                                                color: theme.text
+                                                color: theme.background
                                             }
                                         ]}
                                     >

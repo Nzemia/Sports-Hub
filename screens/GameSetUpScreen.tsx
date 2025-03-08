@@ -68,7 +68,6 @@ const GameSetUpScreen = () => {
     const { userId } = useContext(AuthContext)
 
     const [modalVisible, setModalVisible] = useState(false)
-    const [query, setQuery] = useState("")
     const [comment, setComment] = useState("")
     const [matchFull, setMatchFull] = useState(false)
     const [requests, setRequests] = useState<RequestItem[]>(
@@ -99,7 +98,7 @@ const GameSetUpScreen = () => {
             if (response.status == 200) {
                 Alert.alert(
                     "Request Sent",
-                    "please wait for the host to accept!",
+                    "Please wait for the host to accept!",
                     [
                         {
                             text: "Cancel",

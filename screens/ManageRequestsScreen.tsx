@@ -255,6 +255,7 @@ const ManageRequestsScreen = () => {
                 </View>
             </View>
 
+            {/** Requests */}
             <View
                 style={{
                     marginTop: 10,
@@ -458,7 +459,7 @@ const ManageRequestsScreen = () => {
                                                             }
                                                         ]}
                                                     >
-                                                        RETIRE
+                                                        DECLINE
                                                     </Text>
                                                 </Pressable>
 
@@ -499,6 +500,7 @@ const ManageRequestsScreen = () => {
                 </View>
             </View>
 
+            {/** Playing */}
             <View
                 style={{
                     marginTop: 10,
@@ -539,7 +541,14 @@ const ManageRequestsScreen = () => {
                                             </View>
 
                                             <View>
-                                                <Text>
+                                                <Text
+                                                    style={[
+                                                        styles.nameText,
+                                                        {
+                                                            color: theme.text
+                                                        }
+                                                    ]}
+                                                >
                                                     {
                                                         item?.firstName
                                                     }{" "}
@@ -562,11 +571,12 @@ const ManageRequestsScreen = () => {
                                                     }}
                                                 >
                                                     <Text
-                                                        style={{
-                                                            fontSize: 13,
-                                                            fontWeight:
-                                                                "400"
-                                                        }}
+                                                        style={[
+                                                            styles.skillsText,
+                                                            {
+                                                                color: theme.text
+                                                            }
+                                                        ]}
                                                     >
                                                         INTERMEDIATE
                                                     </Text>

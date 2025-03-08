@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
     StyleSheet,
     ScrollView,
@@ -180,7 +181,6 @@ const CreateActivity = () => {
             setTimeInterval(route.params.timeInterval || "")
         }
     }, [route.params])
-
 
     return (
         <>
