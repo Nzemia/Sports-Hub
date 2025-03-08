@@ -18,6 +18,7 @@ export type RootStackParamList = {
     Image: undefined
     PreFinal: undefined
     MainStack: undefined
+    Start: undefined
 
     Create: {
         taggedVenue?: Venue

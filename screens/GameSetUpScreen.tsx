@@ -81,6 +81,11 @@ const GameSetUpScreen = () => {
         request => request.userId === userId
     )
 
+    const venue = venues.find(
+        (item: Venue) =>
+            item.name === route?.params?.item?.area
+    )
+
     const sendJoinRequest = async (gameId: string) => {
         try {
             const response = await axios.post(
@@ -112,10 +117,10 @@ const GameSetUpScreen = () => {
                     ]
                 )
             }
-            console.log(
-                "Request sent successfully:",
-                response.data
-            )
+            // console.log(
+            //     "Request sent successfully:",
+            //     response.data
+            // )
         } catch (error) {
             console.error("Failed to send request:", error)
         }
@@ -164,7 +169,7 @@ const GameSetUpScreen = () => {
         }
     }
 
-    console.log("players", players)
+    //console.log("players", players)
 
     useEffect(() => {
         const fetchVenues = async () => {
@@ -184,38 +189,29 @@ const GameSetUpScreen = () => {
         fetchVenues()
     }, [])
 
-    const venue = venues.find(
-        (item: Venue) =>
-            item.name === route?.params?.item?.area
-    )
-
-    console.log("ver", venue)
+    //console.log("ver", venue)
 
     const [startTime, endTime] = route?.params?.item?.time
         ?.split(" - ")
         .map(time => time.trim())
 
-    console.log("comment", route?.params?.item?.matchFull)
+    //console.log("comment", route?.params?.item?.matchFull)
 
     const toggleMatchFullStatus = async (
         gameId: string
     ) => {
         try {
-            // Call the backend endpoint to toggle the matchFull status
             const response = await axios.post(
                 "http://10.16.13.39:3000/api/games/toggle-match-full",
                 { gameId }
             )
 
             if (response.status === 200) {
-                // Display a success message
                 Alert.alert(
                     "Success",
                     `Match full status updated`
                 )
-
                 setMatchFull(!matchFull)
-                // Optionally, refresh game data or update UI accordingly
             }
         } catch (error) {
             console.error(
@@ -298,13 +294,11 @@ const GameSetUpScreen = () => {
                             }
                             style={{
                                 fontFamily: "Helvetica",
-                                fontSize: comment ? 15 : 15
+                                fontSize: comment ? 14 : 12
                             }}
                             placeholder="Send a message to the host along with your request!"
                             multiline={true}
-                            placeholderTextColor={
-                                theme.text
-                            }
+                            placeholderTextColor={"white"}
                         />
                     </View>
                     <Pressable

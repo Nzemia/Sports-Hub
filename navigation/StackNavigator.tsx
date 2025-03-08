@@ -125,6 +125,7 @@ const StackNavigator = () => {
                     name="Profile"
                     component={ProfileScreen}
                     options={{
+                        headerShown: false,
                         tabBarIcon: ({
                             focused,
                             color,
@@ -237,6 +238,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Profile"
                     component={ProfileScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Register"
+                    component={StartScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
