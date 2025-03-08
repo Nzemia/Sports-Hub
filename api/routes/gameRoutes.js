@@ -2,6 +2,10 @@ const express = require("express")
 const router = express.Router()
 const moment = require("moment")
 const Game = require("../models/gameModel")
+const {
+    sendPushNotification
+} = require("../services/notificationService")
+const User = require("../models/userModel")
 
 // Create a new game
 router.post("/createGame", async (req, res) => {
@@ -223,30 +227,34 @@ router.post("/accept", async (req, res) => {
     try {
         const { gameId, userId } = req.body
 
-        console.log("user", userId)
-        console.log("heyy", gameId)
-
-        // Find the game
+        // Find the game and user
         const game = await Game.findById(gameId)
-        if (!game) {
+        const user = await User.findById(userId)
+
+        if (!game || !user) {
             return res
                 .status(404)
-                .json({ message: "Game not found" })
+                .json({ message: "Game or user not found" })
         }
 
-        // Add user to players array
+        // Add user to players
         game.players.push(userId)
 
-        // Remove the user from requests array using $pull operator
-        await Game.findByIdAndUpdate(
-            gameId,
-            {
-                $pull: { requests: { userId: userId } }
-            },
-            { new: true }
-        )
+        // Remove from requests
+        await Game.findByIdAndUpdate(gameId, {
+            $pull: { requests: { userId: userId } }
+        })
 
         await game.save()
+
+        // Send push notification if user has a token
+        if (user.expoPushToken) {
+            await sendPushNotification(
+                user.expoPushToken,
+                "Request Accepted!",
+                "Your request to join the game has been accepted. Get ready to play!"
+            )
+        }
 
         res.status(200).json({
             message: "Request accepted",

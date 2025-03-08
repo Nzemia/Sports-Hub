@@ -23,6 +23,7 @@ import { useNavigation } from "expo-router"
 import { AuthContext } from "@/context/AuthContext"
 import axios from "axios"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { registerForPushNotificationsAsync } from "../utils/notificationHelper"
 
 type NameNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -79,27 +80,41 @@ const LoginScreen = () => {
             password: password.trim()
         }
 
-        axios
-            .post(
+        try {
+            const response = await axios.post(
                 "http://10.16.13.39:3000/api/auth/login",
                 user
             )
-            .then(response => {
+
+            if (response.status === 200) {
                 const token = response.data.token
                 console.log("token", token)
 
                 AsyncStorage.setItem("token", token)
                 setToken(token)
-            })
-            .catch(error => {
-                console.error("Login Error:", error)
-                Alert.alert(
-                    "Login Failed",
-                    "Invalid email or password."
+
+                // Get push notification token
+                const pushToken =
+                    await registerForPushNotificationsAsync()
+
+                // Update user with push token
+                await axios.post(
+                    "http://10.16.13.39:3000/api/users/update-token",
+                    {
+                        userId: response.data.userId,
+                        expoPushToken: pushToken
+                    }
                 )
-            })
+            }
+        } catch (error) {
+            console.error("Login failed:", error)
+            Alert.alert(
+                "Login Failed",
+                "Invalid email or password."
+            )
+        }
     }
-    //console.log("token:", token)
+
     return (
         <SafeAreaView
             style={{

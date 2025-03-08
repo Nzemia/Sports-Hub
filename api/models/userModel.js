@@ -60,7 +60,11 @@ const userSchema = new mongoose.Schema(
                 comment: String,
                 timestamp: { type: Date, default: Date.now }
             }
-        ]
+        ],
+        expoPushToken: {
+            type: String,
+            default: null
+        }
     },
     {
         timestamps: true

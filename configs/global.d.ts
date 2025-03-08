@@ -104,3 +104,13 @@ export interface Booking {
     user: string
     game: string
 }
+
+export interface RequestUser {
+    userId: string
+    firstName: string
+    lastName: string
+    image: string
+    comment: string
+    skill?: string
+    noOfGames?: number
+}

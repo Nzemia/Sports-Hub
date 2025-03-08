@@ -29,6 +29,7 @@ import TagVenueScreen from "@/screens/TagVenueScreen"
 import SelectTimeScreen from "@/screens/SelectTimeScreen"
 import GameSetUpScreen from "@/screens/GameSetUpScreen"
 import SlotScreen from "@/screens/SlotScreen"
+import ManageRequestsScreen from "@/screens/ManageRequestsScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -243,6 +244,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Register"
                     component={StartScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Manage"
+                    component={ManageRequestsScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
