@@ -95,7 +95,7 @@ const CreateActivity = () => {
             }
 
             const response = await axios.post(
-                "http://10.16.14.162:3000/api/games/createGame",
+                "http://10.16.13.39:3000/api/games/createGame",
                 gameData
             )
 
@@ -181,17 +181,6 @@ const CreateActivity = () => {
         }
     }, [route.params])
 
-    // useEffect(() => {
-    //     if (route?.params?.taggedVenue) {
-    //         setTaggedVenue(route?.params?.taggedVenue)
-    //     }
-    // }, [route?.params])
-
-    // useEffect(() => {
-    //     if (route?.params?.timeInterval) {
-    //         setTimeInterval(route.params.timeInterval)
-    //     }
-    // }, [route?.params])
 
     return (
         <>

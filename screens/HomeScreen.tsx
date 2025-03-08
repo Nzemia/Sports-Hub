@@ -25,11 +25,21 @@ import { AuthContext } from "@/context/AuthContext"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { jwtDecode } from "jwt-decode"
 import axios from "axios"
+import { RootStackParamList } from "@/configs/global"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+
+type ProfileNavigation = NativeStackNavigationProp<
+    RootStackParamList,
+    "Profile"
+>
 
 const HomeScreen = () => {
     const { theme } = useTheme()
 
     const navigation = useNavigation()
+
+    const profileNavigation =
+        useNavigation<ProfileNavigation>()
 
     const { userId, setUserId } = useContext(AuthContext)
     //console.log("token:", token)
@@ -82,7 +92,13 @@ const HomeScreen = () => {
                         color={theme.text}
                     />
 
-                    <Pressable>
+                    <Pressable
+                        onPress={() =>
+                            profileNavigation.navigate(
+                                "Profile"
+                            )
+                        }
+                    >
                         {user?.image ? (
                             <Image
                                 source={{
@@ -142,7 +158,7 @@ const HomeScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.14.162:3000/api/auth/user/${userId}`
+                `http://10.16.13.39:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {
@@ -161,8 +177,28 @@ const HomeScreen = () => {
             )
         }
     }
-
     //console.log("user", userId)
+
+    // useEffect(() => {
+    //     if (userId) {
+    //         fetchUpcomingGames()
+    //     }
+    // }, [userId])
+    // const fetchUpcomingGames = async () => {
+    //     try {           
+    //         const response = await axios.get(
+    //             `http://10.16.13.39:3000/api/games/upcoming?userId=${userId}`
+    //         )
+    //         setUpcomingGames(response.data)
+    //     } catch (error) {
+    //         console.error(
+    //             "Failed to fetch upcoming games:",
+    //             error
+    //         )
+    //     }
+    // }
+
+    // console.log("user", upcomingGames?.length)
 
     return (
         <SafeAreaView

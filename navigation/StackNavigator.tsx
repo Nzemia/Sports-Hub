@@ -27,6 +27,8 @@ import { AuthContext } from "@/context/AuthContext"
 import CreateActivity from "@/screens/CreateActivity"
 import TagVenueScreen from "@/screens/TagVenueScreen"
 import SelectTimeScreen from "@/screens/SelectTimeScreen"
+import GameSetUpScreen from "@/screens/GameSetUpScreen"
+import SlotScreen from "@/screens/SlotScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -220,6 +222,21 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Time"
                     component={SelectTimeScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Game"
+                    component={GameSetUpScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Slot"
+                    component={SlotScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Profile"
+                    component={ProfileScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

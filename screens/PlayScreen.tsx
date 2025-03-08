@@ -38,9 +38,14 @@ const PlayScreen = () => {
 
     const [option, setOption] = useState("My Sports")
     const [sport, setSport] = useState("Chess")
-    const [games, setGames] = useState([])
+    interface Game {
+        _id: string
+    }
+    const [games, setGames] = useState<Game[]>([])
     const [user, setUser] = useState("")
-    const [upcomingGames, setUpcomingGames] = useState([])
+    const [upcomingGames, setUpcomingGames] = useState<
+        Game[]
+    >([])
 
     const { userId } = useContext(AuthContext)
 
@@ -51,7 +56,7 @@ const PlayScreen = () => {
     const fetchGames = async () => {
         try {
             const response = await axios.get(
-                "http://10.16.14.162:3000/api/games"
+                "http://10.16.13.39:3000/api/games"
             )
             setGames(response.data)
         } catch (error) {
@@ -67,9 +72,9 @@ const PlayScreen = () => {
     }, [userId])
     const fetchUpcomingGames = async () => {
         try {
-            console.log("user id", userId)
+            //console.log("user id", userId)
             const response = await axios.get(
-                `http://10.16.14.162:3000/api/games/upcoming/${userId}`
+                `http://10.16.13.39:3000/api/games/upcoming/${userId}`
             )
             setUpcomingGames(response.data)
         } catch (error) {
@@ -538,7 +543,7 @@ const PlayScreen = () => {
                     )}
                 />
             )}
-            
+
             {option == "Calendar" && (
                 <FlatList
                     data={upcomingGames}

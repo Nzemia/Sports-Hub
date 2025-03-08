@@ -124,6 +124,8 @@ router.get("/upcoming/:userId", async (req, res) => {
             adminName: game.admin
                 ? `${game.admin.firstName} ${game.admin.lastName}`
                 : "Unknown",
+            isUserAdmin:
+                game.admin._id.toString() === userId,
             adminUrl: game.admin ? game.admin.image : null,
             matchFull: game.matchFull
         }))
@@ -140,29 +142,32 @@ router.get("/upcoming/:userId", async (req, res) => {
 // Request to join a game
 router.post("/:gameId/request", async (req, res) => {
     try {
-        const { comment } = req.body
+        const { userId, comment } = req.body
         const { gameId } = req.params
-        const userId = req.user.id
 
         const game = await Game.findById(gameId)
-        if (!game)
+        if (!game) {
             return res
                 .status(404)
                 .json({ message: "Game not found" })
-
-        if (
-            game.requests.some(
-                request =>
-                    request.userId.toString() === userId
-            )
-        ) {
-            return res.status(400).json({
-                message: "Request already sent"
-            })
         }
 
+        // Check if the user has already requested to join the game
+        const existingRequest = game.requests.find(
+            request => request.userId.toString() === userId
+        )
+        if (existingRequest) {
+            return res
+                .status(400)
+                .json({ message: "Request already sent" })
+        }
+
+        // Add the user's ID and comment to the requests array
         game.requests.push({ userId, comment })
+
+        // Save the updated game document
         await game.save()
+
         res.status(200).json({
             message: "Request sent successfully"
         })
@@ -174,38 +179,81 @@ router.post("/:gameId/request", async (req, res) => {
     }
 })
 
+// Get game requests with user information
+router.get("/:gameId/requests", async (req, res) => {
+    try {
+        const { gameId } = req.params
+        const game = await Game.findById(gameId).populate({
+            path: "requests.userId",
+            select: "email firstName lastName image skill noOfGames playpals sports"
+        })
+
+        if (!game) {
+            return res
+                .status(404)
+                .json({ message: "Game not found" })
+        }
+
+        const requestsWithUserInfo = game.requests.map(
+            request => ({
+                userId: request.userId._id,
+                email: request.userId.email,
+                firstName: request.userId.firstName,
+                lastName: request.userId.lastName,
+                image: request.userId.image,
+                skill: request.userId.skill,
+                noOfGames: request.userId.noOfGames,
+                playpals: request.userId.playpals,
+                sports: request.userId.sports,
+                comment: request.comment
+            })
+        )
+
+        res.json(requestsWithUserInfo)
+    } catch (err) {
+        console.error(err)
+        res.status(500).json({
+            message: "Failed to fetch requests"
+        })
+    }
+})
+
 // Accept player request
 router.post("/accept", async (req, res) => {
     try {
         const { gameId, userId } = req.body
+
+        console.log("user", userId)
+        console.log("heyy", gameId)
+
+        // Find the game
         const game = await Game.findById(gameId)
-        if (!game)
+        if (!game) {
             return res
                 .status(404)
                 .json({ message: "Game not found" })
-
-        if (game.players.includes(userId)) {
-            return res.status(400).json({
-                message: "User is already in the game"
-            })
         }
 
-        if (game.players.length >= game.totalPlayers) {
-            return res
-                .status(400)
-                .json({ message: "Game is full" })
-        }
-
+        // Add user to players array
         game.players.push(userId)
-        game.requests = game.requests.filter(
-            request => request.userId.toString() !== userId
+
+        // Remove the user from requests array using $pull operator
+        await Game.findByIdAndUpdate(
+            gameId,
+            {
+                $pull: { requests: { userId: userId } }
+            },
+            { new: true }
         )
+
         await game.save()
+
         res.status(200).json({
-            message: "Request accepted"
+            message: "Request accepted",
+            game
         })
-    } catch (err) {
-        console.error(err)
+    } catch (error) {
+        console.error(error)
         res.status(500).json({ message: "Server error" })
     }
 })
@@ -217,15 +265,47 @@ router.get("/:gameId/players", async (req, res) => {
         const game = await Game.findById(gameId).populate(
             "players"
         )
-        if (!game)
+
+        if (!game) {
             return res
                 .status(404)
                 .json({ message: "Game not found" })
+        }
+
         res.status(200).json(game.players)
     } catch (err) {
         console.error(err)
         res.status(500).json({
             message: "Failed to fetch players"
+        })
+    }
+})
+
+// Toggle match full status
+router.post("/toggle-match-full", async (req, res) => {
+    try {
+        const { gameId } = req.body
+
+        // Find the game by its ID
+        const game = await Game.findById(gameId)
+        if (!game) {
+            return res
+                .status(404)
+                .json({ message: "Game not found" })
+        }
+
+        // Toggle the matchFull status
+        game.matchFull = !game.matchFull
+        await game.save()
+
+        res.json({
+            message: "Match full status updated",
+            matchFull: game.matchFull
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({
+            message: "Failed to update match full status"
         })
     }
 })

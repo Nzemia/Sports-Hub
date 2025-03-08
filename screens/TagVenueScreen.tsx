@@ -23,6 +23,8 @@ interface Venue {
     image: string
     near?: string
     rating?: number
+    sportsAvailable: string[]
+    bookings: any[]
 }
 
 type TagVenueScreenNavigationProp =
@@ -47,7 +49,7 @@ const TagVenueScreen = () => {
         const fetchVenues = async () => {
             try {
                 const response = await axios.get(
-                    "http://10.16.14.162:3000/api/venues"
+                    "http://10.16.13.39:3000/api/venues"
                 )
                 setVenues(response.data)
             } catch (error) {
