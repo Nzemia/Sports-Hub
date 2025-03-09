@@ -82,7 +82,7 @@ const LoginScreen = () => {
 
         try {
             const response = await axios.post(
-                "http://10.16.13.39:3000/api/auth/login",
+                "http://10.16.13.17:3000/api/auth/login",
                 user
             )
 
@@ -99,7 +99,7 @@ const LoginScreen = () => {
 
                 // Update user with push token
                 await axios.post(
-                    "http://10.16.13.39:3000/api/users/update-token",
+                    "http://10.16.13.17:3000/api/users/update-token",
                     {
                         userId: response.data.userId,
                         expoPushToken: pushToken

@@ -62,7 +62,7 @@ const ManageRequestsScreen = () => {
             }
             console.log(user)
             const response = await axios.post(
-                "http://10.16.13.39:3000/api/games/accept",
+                "http://10.16.13.17:3000/api/games/accept",
                 user
             )
 
@@ -84,7 +84,7 @@ const ManageRequestsScreen = () => {
     const fetchRequests = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.39:3000/api/games/${gameId}/requests`
+                `http://10.16.13.17:3000/api/games/${gameId}/requests`
             )
             setRequests(response.data)
         } catch (error) {
@@ -98,7 +98,7 @@ const ManageRequestsScreen = () => {
     const fetchPlayers = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.39:3000/api/games/${gameId}/players`
+                `http://10.16.13.17:3000/api/games/${gameId}/players`
             )
             setPlayers(response.data)
         } catch (error) {

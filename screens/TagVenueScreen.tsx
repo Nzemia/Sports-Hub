@@ -16,7 +16,6 @@ import { useNavigation } from "expo-router"
 import { RootStackParamList } from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 
-
 interface Venue {
     _id: string
     name: string
@@ -36,8 +35,6 @@ type TagVenueScreenNavigationProp =
 const TagVenueScreen = () => {
     const { theme } = useTheme()
 
-
-
     const navigation =
         useNavigation<TagVenueScreenNavigationProp>()
 
@@ -49,7 +46,7 @@ const TagVenueScreen = () => {
         const fetchVenues = async () => {
             try {
                 const response = await axios.get(
-                    "http://10.16.13.39:3000/api/venues"
+                    "http://10.16.13.17:3000/api/venues"
                 )
                 setVenues(response.data)
             } catch (error) {
@@ -62,9 +59,6 @@ const TagVenueScreen = () => {
         fetchVenues()
     }, [])
 
-
-
-
     useEffect(() => {
         if (taggedVenue) {
             navigation.navigate("Create", { taggedVenue })
@@ -73,8 +67,7 @@ const TagVenueScreen = () => {
 
     const handleSelectVenue = (venue: Venue) => {
         navigation.navigate("Create", {
-            taggedVenue: venue,
-            
+            taggedVenue: venue
         })
     }
     return (
@@ -124,7 +117,7 @@ const TagVenueScreen = () => {
             <FlatList
                 data={venues}
                 keyExtractor={item => item._id}
-                renderItem={({ item }) => (             
+                renderItem={({ item }) => (
                     <Pressable
                         onPress={() =>
                             handleSelectVenue(item)

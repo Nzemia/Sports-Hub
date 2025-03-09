@@ -1,4 +1,34 @@
 export type RootStackParamList = {
+    // Auth-related routes
+    Login: undefined
+    Register: undefined
+    Name: undefined
+    Email: undefined
+    Password: undefined
+    Image: undefined
+    PreFinal: undefined
+    MainStack: undefined
+    Start: undefined
+
+    // Game-related routes
+    Create: {
+        taggedVenue?: Venue
+        timeInterval?: string
+    }
+    Play: undefined
+    Game: {
+        item: GameItem
+    }
+    Manage: {
+        requests: RequestItem[]
+        userId: string
+        gameId: string
+    }
+    Players: {
+        players: Player[]
+    }
+
+    // Venue-related routes
     Venue: {
         id: string
         name: string
@@ -10,26 +40,11 @@ export type RootStackParamList = {
         location: string
         bookings: number
     }
-    Login: undefined
-    Register: undefined
-    Name: undefined
-    Email: undefined
-    Password: undefined
-    Image: undefined
-    PreFinal: undefined
-    MainStack: undefined
-    Start: undefined
-
-    Create: {
-        taggedVenue?: Venue
-        timeInterval?: string
-    }
     TagVenue: undefined
     Time: undefined
-    Play: undefined
-    Game: {
-        item: GameItem
-    }
+    Payment: undefined
+
+    // Slot-related routes
     Slot: {
         place: string
         sports: string[]
@@ -40,24 +55,8 @@ export type RootStackParamList = {
         gameId: string
         bookings: Booking[]
     }
-    Manage: {
-        requests: RequestItem[]
-        userId: string
-        gameId: string
-    }
-    Players: {
-        players: Player[]
-    }
-    Slot: {
-        place: string
-        sports: string[]
-        date: string
-        slot: string
-        startTime: string
-        endTime: string
-        gameId: string
-        bookings: Booking[]
-    }
+
+    // Profile routes
     Profile: undefined
 }
 
@@ -68,6 +67,19 @@ export interface Venue {
     sportsAvailable: string[]
     bookings: Booking[]
 }
+
+export interface Court {
+    name: string
+    available: boolean
+}
+
+export interface Sport {
+    name: string
+    icon: string
+    price: number
+    courts: Court[]
+}
+
 export interface GameItem {
     _id: string
     adminName: string
@@ -97,14 +109,6 @@ export interface Player {
     sports?: string[]
 }
 
-export interface Booking {
-    courtNumber: string
-    date: string
-    time: string
-    user: string
-    game: string
-}
-
 export interface RequestUser {
     userId: string
     firstName: string
@@ -113,4 +117,23 @@ export interface RequestUser {
     comment: string
     skill?: string
     noOfGames?: number
+}
+
+export interface Booking {
+    courtNumber: string
+    date: string
+    time: string
+    user: string
+    game: string
+}
+
+export interface SlotScreenParams {
+    place: string
+    sports: Sport[]
+    date?: string
+    slot?: string
+    startTime?: string
+    endTime?: string
+    gameId?: string
+    bookings: Booking[]
 }

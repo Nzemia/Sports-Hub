@@ -30,6 +30,7 @@ import SelectTimeScreen from "@/screens/SelectTimeScreen"
 import GameSetUpScreen from "@/screens/GameSetUpScreen"
 import SlotScreen from "@/screens/SlotScreen"
 import ManageRequestsScreen from "@/screens/ManageRequestsScreen"
+import PaymentScreen from "@/screens/PaymentScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -249,6 +250,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Manage"
                     component={ManageRequestsScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Payment"
+                    component={PaymentScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

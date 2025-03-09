@@ -26,7 +26,10 @@ import { AuthContext } from "@/context/AuthContext"
 import axios from "axios"
 import Game from "@/components/Game"
 import UpComingGame from "@/components/UpComingGame"
-import { RouteProp, useRoute } from "@react-navigation/native"
+import {
+    RouteProp,
+    useRoute
+} from "@react-navigation/native"
 
 // Define interfaces at the top level
 interface Game {
@@ -97,7 +100,7 @@ const PlayScreen: React.FC = () => {
     const fetchGames = async () => {
         try {
             const response = await axios.get(
-                "http://10.16.13.39:3000/api/games"
+                "http://10.16.13.17:3000/api/games"
             )
             setGames(response.data)
         } catch (error) {
@@ -121,7 +124,7 @@ const PlayScreen: React.FC = () => {
     const fetchUser = async () => {
         try {
             const response = await axios.get<User>(
-                `http://10.16.13.39:3000/api/auth/user/${userId}`
+                `http://10.16.13.17:3000/api/auth/user/${userId}`
             )
             setUser(response.data)
         } catch (error) {
@@ -143,7 +146,7 @@ const PlayScreen: React.FC = () => {
         try {
             //console.log("user id", userId)
             const response = await axios.get(
-                `http://10.16.13.39:3000/api/games/upcoming/${userId}`
+                `http://10.16.13.17:3000/api/games/upcoming/${userId}`
             )
             setUpcomingGames(response.data)
         } catch (error) {

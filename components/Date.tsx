@@ -5,14 +5,25 @@ import {
     TouchableOpacity
 } from "react-native"
 import React from "react"
-import moment from "moment"
+import moment, { Moment } from "moment"
+import { useTheme } from "@/constants/ThemeProvider"
+import { fontFamily } from "@/constants/fonts"
 
-const Date = ({
+interface DateProps {
+    date: Moment
+    setSelectedTime: (time: string) => void
+    onSelectDate: (date: string) => void
+    selected: string
+}
+
+const Date: React.FC<DateProps> = ({
     date,
+    setSelectedTime,
     onSelectDate,
-    selected,
-    setSelectedTime
+    selected
 }) => {
+    const { theme } = useTheme()
+
     const day =
         moment(date).format("YYYY-MM-DD") ===
         moment().format("YYYY-MM-DD")
@@ -23,11 +34,11 @@ const Date = ({
 
     // get the full date e.g 2021-01-01 - we'll use this to compare the date to the selected date
     const fullDate = moment(date).format("YYYY-MM-DD")
-    console.log(fullDate)
+    //console.log(fullDate)
     return (
         <TouchableOpacity
             onPress={() => {
-                setSelectedTime([])
+                setSelectedTime("")
                 onSelectDate(fullDate)
             }}
             style={[
@@ -41,7 +52,8 @@ const Date = ({
                 style={[
                     styles.big,
                     selected === fullDate && {
-                        color: "#fff"
+                        color: theme.text,
+                        fontFamily: fontFamily.bold
                     }
                 ]}
             >
@@ -52,8 +64,8 @@ const Date = ({
                 style={[
                     styles.medium,
                     selected === fullDate && {
-                        color: "#fff",
-                        fontWeight: "bold",
+                        color: theme.text,
+                        fontFamily: fontFamily.bold,
                         fontSize: 24
                     }
                 ]}
@@ -68,8 +80,7 @@ export default Date
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#e0e0e0",
-
+        backgroundColor: "#9DB2CE",
         borderRadius: 10,
         borderColor: "#ddd",
         padding: 10,
@@ -80,7 +91,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 5
     },
     big: {
-        fontWeight: "bold",
         fontSize: 20
     },
     medium: {

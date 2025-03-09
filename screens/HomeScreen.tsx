@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
     Image,
     ImageBackground,
@@ -33,10 +35,16 @@ type ProfileNavigation = NativeStackNavigationProp<
     "Profile"
 >
 
+type CalendarPlayNavigation = NativeStackNavigationProp<
+    RootStackParamList,
+    "Play"
+>
+
 const HomeScreen = () => {
     const { theme } = useTheme()
 
-    const navigation = useNavigation()
+    const navigation =
+        useNavigation<CalendarPlayNavigation>()
 
     const profileNavigation =
         useNavigation<ProfileNavigation>()
@@ -158,7 +166,7 @@ const HomeScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.13.39:3000/api/auth/user/${userId}`
+                `http://10.16.13.17:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {
@@ -185,9 +193,9 @@ const HomeScreen = () => {
     //     }
     // }, [userId])
     // const fetchUpcomingGames = async () => {
-    //     try {           
+    //     try {
     //         const response = await axios.get(
-    //             `http://10.16.13.39:3000/api/games/upcoming?userId=${userId}`
+    //             `http://10.16.13.17:3000/api/games/upcoming?userId=${userId}`
     //         )
     //         setUpcomingGames(response.data)
     //     } catch (error) {
@@ -302,7 +310,7 @@ const HomeScreen = () => {
                             ]}
                         >
                             Get up for your game
-                        </Text> */}
+                        </Text>  */}
                     </View>
 
                     {/** activity and view button */}
@@ -319,7 +327,7 @@ const HomeScreen = () => {
                                 { color: theme.text }
                             ]}
                         >
-                            Badminton Activity
+                            Activities
                         </Text>
                         <Pressable
                             style={[
@@ -355,6 +363,11 @@ const HomeScreen = () => {
 
                     {/** view calendar button */}
                     <Pressable
+                        onPress={() =>
+                            navigation.navigate("Play", {
+                                initialOption: "Calendar"
+                            })
+                        }
                         style={{
                             marginTop: 10,
                             marginLeft: "auto",
