@@ -42,7 +42,15 @@ export type RootStackParamList = {
     }
     TagVenue: undefined
     Time: undefined
-    Payment: undefined
+    Payment: {
+        selectedCourt: string
+        selectedSport: string
+        price: number
+        selectedTime: string
+        selectedDate: string
+        place: string
+        gameId?: string
+    }
 
     // Slot-related routes
     Slot: {

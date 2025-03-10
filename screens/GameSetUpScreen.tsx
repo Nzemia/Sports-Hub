@@ -88,7 +88,7 @@ const GameSetUpScreen = () => {
     const sendJoinRequest = async (gameId: string) => {
         try {
             const response = await axios.post(
-                `http://10.16.13.17:3000/api/games/${gameId}/request`,
+                `http://10.16.13.213:3000/api/games/${gameId}/request`,
                 {
                     userId,
                     comment
@@ -138,7 +138,7 @@ const GameSetUpScreen = () => {
             }
 
             const response = await axios.get(
-                `http://10.16.13.17:3000/api/games/${gameId}/requests`
+                `http://10.16.13.213:3000/api/games/${gameId}/requests`
             )
             setRequests(response.data)
         } catch (error) {
@@ -160,7 +160,7 @@ const GameSetUpScreen = () => {
                 return
             }
             const response = await axios.get(
-                `http://10.16.13.17:3000/api/games/${gameId}/players`
+                `http://10.16.13.213:3000/api/games/${gameId}/players`
             )
             setPlayers(response.data)
         } catch (error) {
@@ -174,7 +174,7 @@ const GameSetUpScreen = () => {
         const fetchVenues = async () => {
             try {
                 const response = await axios.get(
-                    "http://10.16.13.17:3000/api/venues"
+                    "http://10.16.13.213:3000/api/venues"
                 )
                 setVenues(response.data)
             } catch (error) {
@@ -201,7 +201,7 @@ const GameSetUpScreen = () => {
     ) => {
         try {
             const response = await axios.post(
-                "http://10.16.13.17:3000/api/games/toggle-match-full",
+                "http://10.16.13.213:3000/api/games/toggle-match-full",
                 { gameId }
             )
 

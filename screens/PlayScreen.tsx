@@ -100,7 +100,7 @@ const PlayScreen: React.FC = () => {
     const fetchGames = async () => {
         try {
             const response = await axios.get(
-                "http://10.16.13.17:3000/api/games"
+                "http://10.16.13.213:3000/api/games"
             )
             setGames(response.data)
         } catch (error) {
@@ -124,7 +124,7 @@ const PlayScreen: React.FC = () => {
     const fetchUser = async () => {
         try {
             const response = await axios.get<User>(
-                `http://10.16.13.17:3000/api/auth/user/${userId}`
+                `http://10.16.13.213:3000/api/auth/user/${userId}`
             )
             setUser(response.data)
         } catch (error) {
@@ -146,7 +146,7 @@ const PlayScreen: React.FC = () => {
         try {
             //console.log("user id", userId)
             const response = await axios.get(
-                `http://10.16.13.17:3000/api/games/upcoming/${userId}`
+                `http://10.16.13.213:3000/api/games/upcoming/${userId}`
             )
             setUpcomingGames(response.data)
         } catch (error) {

@@ -166,7 +166,7 @@ const HomeScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.13.17:3000/api/auth/user/${userId}`
+                `http://10.16.13.213:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {
@@ -195,7 +195,7 @@ const HomeScreen = () => {
     // const fetchUpcomingGames = async () => {
     //     try {
     //         const response = await axios.get(
-    //             `http://10.16.13.17:3000/api/games/upcoming?userId=${userId}`
+    //             `http://10.16.13.213:3000/api/games/upcoming?userId=${userId}`
     //         )
     //         setUpcomingGames(response.data)
     //     } catch (error) {

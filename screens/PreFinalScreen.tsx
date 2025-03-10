@@ -112,7 +112,7 @@ const PreFinalScreen = () => {
         try {
             const response = await axios
                 .post(
-                    "http://10.16.13.17:3000/api/auth/register",
+                    "http://10.16.13.213:3000/api/auth/register",
                     userData
                 )
                 .then(async response => {
