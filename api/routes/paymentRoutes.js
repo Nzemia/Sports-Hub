@@ -7,12 +7,24 @@ router.post("/initiate", async (req, res) => {
     try {
         const { phoneNumber, amount, orderId } = req.body
 
-        // Validate phone number format (should be 254XXXXXXXXX)
+        if (!phoneNumber || !amount || !orderId) {
+            return res.status(400).json({
+                message: "Missing required parameters"
+            })
+        }
+
+        // Format phone number
         const formattedPhone = phoneNumber.startsWith("254")
             ? phoneNumber
-            : `254${phoneNumber.substring(
-                  phoneNumber.length - 9
-              )}`
+            : `254${phoneNumber.replace(/^0/, "")}`
+
+        // Validate phone number format
+        if (!/^254[0-9]{9}$/.test(formattedPhone)) {
+            return res.status(400).json({
+                message:
+                    "Invalid phone number format. Use format: 254XXXXXXXXX"
+            })
+        }
 
         const response = await mpesaService.initiateSTKPush(
             formattedPhone,
@@ -25,9 +37,15 @@ router.post("/initiate", async (req, res) => {
             checkoutRequestID: response.CheckoutRequestID
         })
     } catch (error) {
-        console.error("Payment initiation error:", error)
+        console.error(
+            "Payment initiation error:",
+            error.response?.data || error
+        )
         res.status(500).json({
-            message: "Failed to initiate payment"
+            message: "Failed to initiate payment",
+            error:
+                error.response?.data?.errorMessage ||
+                error.message
         })
     }
 })

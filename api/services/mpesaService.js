@@ -3,32 +3,13 @@ const mpesaConfig = require("../config/mpesa.config")
 
 class MpesaService {
     constructor() {
-        this.baseUrl =
-            mpesaConfig.environment === "production"
-                ? "https://api.safaricom.co.ke"
-                : "https://sandbox.safaricom.co.ke"
-    }
-
-    async getAccessToken() {
-        const auth = Buffer.from(
-            `${mpesaConfig.consumerKey}:${mpesaConfig.consumerSecret}`
-        ).toString("base64")
-        try {
-            const response = await axios.get(
-                `${this.baseUrl}/oauth/v1/generate?grant_type=client_credentials`,
-                {
-                    headers: {
-                        Authorization: `Basic ${auth}`
-                    }
-                }
+        if (
+            !mpesaConfig.consumerKey ||
+            !mpesaConfig.consumerSecret
+        ) {
+            throw new Error(
+                "M-PESA credentials not configured"
             )
-            return response.data.access_token
-        } catch (error) {
-            console.error(
-                "Error getting access token:",
-                error
-            )
-            throw error
         }
     }
 
@@ -40,7 +21,7 @@ class MpesaService {
                 this.generatePassword(timestamp)
 
             const response = await axios.post(
-                `${this.baseUrl}/mpesa/stkpush/v1/processrequest`,
+                "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
                 {
                     BusinessShortCode:
                         mpesaConfig.shortCode,
@@ -48,7 +29,7 @@ class MpesaService {
                     Timestamp: timestamp,
                     TransactionType:
                         "CustomerPayBillOnline",
-                    Amount: amount,
+                    Amount: Math.round(amount), 
                     PartyA: phoneNumber,
                     PartyB: mpesaConfig.shortCode,
                     PhoneNumber: phoneNumber,
@@ -58,7 +39,8 @@ class MpesaService {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`
+                        Authorization: `Bearer ${accessToken}`,
+                        "Content-Type": "application/json"
                     }
                 }
             )
@@ -66,8 +48,33 @@ class MpesaService {
             return response.data
         } catch (error) {
             console.error(
-                "Error initiating STK push:",
-                error
+                "STK Push Error:",
+                error.response?.data || error.message
+            )
+            throw error
+        }
+    }
+
+    async getAccessToken() {
+        try {
+            const auth = Buffer.from(
+                `${mpesaConfig.consumerKey}:${mpesaConfig.consumerSecret}`
+            ).toString("base64")
+
+            const response = await axios.get(
+                "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+                {
+                    headers: {
+                        Authorization: `Basic ${auth}`
+                    }
+                }
+            )
+
+            return response.data.access_token
+        } catch (error) {
+            console.error(
+                "Access Token Error:",
+                error.response?.data || error.message
             )
             throw error
         }

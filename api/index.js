@@ -6,6 +6,7 @@ const connectDB = require("./config/db")
 const authRoutes = require("./routes/authRoutes")
 const gameRoutes = require("./routes/gameRoutes")
 const venueRoutes = require("./routes/venueRoutes")
+const paymentRoutes = require("./routes/paymentRoutes")
 
 const app = express()
 
@@ -20,6 +21,7 @@ connectDB()
 app.use("/api/auth", authRoutes)
 app.use("/api/games", gameRoutes)
 app.use("/api/venues", venueRoutes)
+app.use("/api/payment", paymentRoutes)
 
 // Start server
 const PORT = 3000
