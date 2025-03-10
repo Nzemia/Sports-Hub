@@ -29,7 +29,7 @@ class MpesaService {
                     Timestamp: timestamp,
                     TransactionType:
                         "CustomerPayBillOnline",
-                    Amount: Math.round(amount), 
+                    Amount: Math.round(amount),
                     PartyA: phoneNumber,
                     PartyB: mpesaConfig.shortCode,
                     PhoneNumber: phoneNumber,

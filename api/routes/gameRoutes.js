@@ -53,7 +53,7 @@ router.get("/", async (req, res) => {
 
             //console.log("game Date", gameDate)
             const gameTime = game.time.split(" - ")[0]
-            console.log("game time", gameTime)
+            //console.log("game time", gameTime)
             const gameDateTime = moment(
                 `${gameDate.format(
                     "YYYY-MM-DD"

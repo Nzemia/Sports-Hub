@@ -40,6 +40,34 @@ const PaymentScreen: React.FC = () => {
     const total = (route.params?.price || 0) + 8.8
     const orderId = `ORDER-${new Date().getTime()}`
 
+    // validate phone numbers
+    const validateAndFormatPhone = (
+        phone: string
+    ): { isValid: boolean; formatted?: string } => {
+        const cleaned = phone.replace(/[^0-9]/g, "")
+
+        // Check if matches any valid format
+        const regex = /^(?:254|0)?[17][0-9]{8}$/
+        if (!regex.test(cleaned)) {
+            return { isValid: false }
+        }
+
+        // Format the number to include 254 prefix
+        let formatted = cleaned
+        if (cleaned.startsWith("254")) {
+            formatted = cleaned
+        } else if (cleaned.startsWith("0")) {
+            formatted = `254${cleaned.slice(1)}`
+        } else if (
+            cleaned.startsWith("7") ||
+            cleaned.startsWith("1")
+        ) {
+            formatted = `254${cleaned}`
+        }
+
+        return { isValid: true, formatted }
+    }
+
     const bookSlot = async () => {
         if (!phoneNumber) {
             Alert.alert(
@@ -49,30 +77,23 @@ const PaymentScreen: React.FC = () => {
             return
         }
 
-        // Validate phone number format
-        const phoneRegex = /^(?:254|\+254|0)?([0-9]{9})$/
-        if (!phoneRegex.test(phoneNumber)) {
+        const { isValid, formatted } =
+            validateAndFormatPhone(phoneNumber)
+        if (!isValid) {
             Alert.alert(
                 "Error",
-                "Invalid phone number format. Use format: 254XXXXXXXXX or 07XXXXXXXX"
+                "Invalid phone number. Please use a valid Safaricom number (07XX, 01XX, or 254XXX format)"
             )
             return
         }
-
         try {
             setIsLoading(true)
 
-            // Format phone number if needed
-            const formattedPhone = phoneNumber.startsWith(
-                "254"
-            )
-                ? phoneNumber
-                : `254${phoneNumber.replace(/^0/, "")}`
-
+            // First initiate the payment
             const paymentResponse = await axios.post(
                 "http://10.16.13.213:3000/api/payment/initiate",
                 {
-                    phoneNumber: formattedPhone,
+                    phoneNumber: formatted,
                     amount: Math.round(total),
                     orderId: `ORDER-${Date.now()}`
                 }
@@ -81,44 +102,75 @@ const PaymentScreen: React.FC = () => {
             if (paymentResponse.data.checkoutRequestID) {
                 Alert.alert(
                     "Payment Initiated",
-                    "Please check your phone for the M-PESA prompt"
-                )
+                    "Please check your phone for the M-PESA prompt",
+                    [
+                        {
+                            text: "OK",
+                            onPress: async () => {
+                                try {
+                                    const bookingResponse =
+                                        await axios.post(
+                                            "http://10.16.13.213:3000/api/venues/book",
+                                            {
+                                                courtNumber:
+                                                    route
+                                                        .params
+                                                        .selectedCourt,
+                                                date: route
+                                                    .params
+                                                    .selectedDate,
+                                                time: route
+                                                    .params
+                                                    .selectedTime,
+                                                userId,
+                                                name: route
+                                                    .params
+                                                    .place,
+                                                game: route
+                                                    .params
+                                                    ?.gameId
+                                            }
+                                        )
 
-                const bookingResponse = await axios.post(
-                    "http://10.16.13.213:3000/api/venues/book",
-                    {
-                        courtNumber:
-                            route.params.selectedCourt,
-                        date: route.params.selectedDate,
-                        time: route.params.selectedTime,
-                        userId,
-                        name: route.params.place,
-                        game: route.params?.gameId
-                    }
-                )
-
-                if (bookingResponse.status === 200) {
-                    Alert.alert(
-                        "Success",
-                        "Booking successful!",
-                        [
-                            {
-                                text: "OK",
-                                onPress: () =>
-                                    navigation.navigate(
-                                        "Play"
+                                    if (
+                                        bookingResponse.status ===
+                                        200
+                                    ) {
+                                        Alert.alert(
+                                            "Success",
+                                            "Booking successful!",
+                                            [
+                                                {
+                                                    text: "OK",
+                                                    onPress:
+                                                        () =>
+                                                            navigation.navigate(
+                                                                "Play"
+                                                            )
+                                                }
+                                            ]
+                                        )
+                                    }
+                                } catch (bookingError) {
+                                    console.error(
+                                        "Booking error:",
+                                        bookingError
                                     )
+                                    // Alert.alert(
+                                    //     "Note",
+                                    //     "Payment initiated. Please complete the payment on your phone. The booking will be confirmed after payment."
+                                    // )
+                                }
                             }
-                        ]
-                    )
-                }
+                        }
+                    ]
+                )
             }
-        } catch (error) {
-            console.error("Error booking slot:", error)
-            Alert.alert(
-                "Error",
-                "Failed to process payment"
-            )
+        } catch (error: any) {
+            const errorMessage =
+                error.response?.data?.message ||
+                "Please try again"
+            Alert.alert("Payment Initiation", errorMessage)
         } finally {
             setIsLoading(false)
         }
