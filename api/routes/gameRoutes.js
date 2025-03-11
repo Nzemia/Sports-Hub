@@ -14,63 +14,83 @@ router.post("/createGame", async (req, res) => {
             sport,
             area,
             date,
-            time,
             admin,
-            totalPlayers
+            totalPlayers,
+            isPublic
         } = req.body
-        // const admin = req.user.id
+
+        // Check if user already has a game on this date
+        const existingGame = await Game.findOne({
+            admin,
+            sport,
+            date,
+            area
+        })
+
+        if (existingGame) {
+            return res.status(400).json({
+                message:
+                    "You already have a similar game scheduled for this date"
+            })
+        }
 
         const newGame = new Game({
             sport,
             area,
             date,
-            time,
             admin,
             totalPlayers,
+            isPublic,
             players: [admin]
         })
+
         const savedGame = await newGame.save()
-        res.status(201).json(savedGame)
+
+        // Get games sorted by creation date
+        const games = await Game.find({})
+            .sort({ createdAt: -1 })
+            .populate("admin")
+            .populate("players")
+
+        res.status(201).json({
+            message: "Game created successfully",
+            games
+        })
     } catch (err) {
         console.error(err)
         res.status(500).json({
-            message: "Failed to create game"
+            message:
+                err.code === 11000
+                    ? "Similar game already exists"
+                    : "Failed to create game"
         })
     }
 })
 
 router.get("/", async (req, res) => {
     try {
-        const games = await Game.find({})
+        const { userId } = req.query
+        const games = await Game.find({
+            $or: [{ admin: userId }, { players: userId }]
+        })
             .populate("admin")
             .populate("players", "image firstName lastName")
 
         const currentDate = moment()
 
-        // Filter games based on current date and time
+        // Filter games based on current date only
         const filteredGames = games.filter(game => {
             const gameDate = moment(game.date, "Do MMMM")
-
-            //console.log("game Date", gameDate)
-            const gameTime = game.time.split(" - ")[0]
-            //console.log("game time", gameTime)
-            const gameDateTime = moment(
-                `${gameDate.format(
-                    "YYYY-MM-DD"
-                )} ${gameTime}`,
-                "YYYY-MM-DD h:mm A"
+            return (
+                gameDate.isAfter(currentDate, "day") ||
+                gameDate.isSame(currentDate, "day")
             )
-
-            //console.log("gameDateTime", gameDateTime)
-
-            return gameDateTime.isAfter(currentDate)
         })
 
         const formattedGames = filteredGames.map(game => ({
             _id: game._id,
             sport: game.sport,
             date: game.date,
-            time: game.time,
             area: game.area,
             players: game.players
                 .filter(player => player)
@@ -89,6 +109,7 @@ router.get("/", async (req, res) => {
             adminUrl: game.admin ? game.admin.image : null,
             matchFull: game.matchFull
         }))
+
         res.json(formattedGames)
     } catch (err) {
         console.error(err)
@@ -108,11 +129,21 @@ router.get("/upcoming/:userId", async (req, res) => {
             .populate("admin")
             .populate("players", "image firstName lastName")
 
-        const formattedGames = games.map(game => ({
+        const currentDate = moment()
+
+        // Filter upcoming games
+        const upcomingGames = games.filter(game => {
+            const gameDate = moment(game.date, "Do MMMM")
+            return (
+                gameDate.isAfter(currentDate, "day") ||
+                gameDate.isSame(currentDate, "day")
+            )
+        })
+
+        const formattedGames = upcomingGames.map(game => ({
             _id: game._id,
             sport: game.sport,
             date: game.date,
-            time: game.time,
             area: game.area,
             players: game.players
                 .filter(player => player)
@@ -150,10 +181,22 @@ router.post("/:gameId/request", async (req, res) => {
         const { gameId } = req.params
 
         const game = await Game.findById(gameId)
+
         if (!game) {
             return res
                 .status(404)
                 .json({ message: "Game not found" })
+        }
+
+        // Check if game is private and user is not invited
+        if (
+            !game.isPublic &&
+            !game.invitedPlayers?.includes(userId)
+        ) {
+            return res.status(403).json({
+                message:
+                    "This is a private game. You need an invitation to join."
+            })
         }
 
         // Check if the user has already requested to join the game

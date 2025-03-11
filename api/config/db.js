@@ -9,6 +9,7 @@ const connectDB = async () => {
         console.log("Connected to MongoDB")
 
         await seedVenues()
+        //await removeVenues()
     } catch (error) {
         console.error(
             "❌ Error connecting to MongoDB:",
@@ -41,5 +42,30 @@ const seedVenues = async () => {
         console.error("❌ Error seeding venues:", error)
     }
 }
+const removeVenues = async () => {
+    try {
+        const result = await Venue.deleteMany({})
+        console.log(`Removed ${result.deletedCount} venues`)
+    } catch (error) {
+        console.error("❌ Error removing venues:", error)
+    }
+}
 
+//Remove Only Seeded Venues
+const removeSeededVenues = async () => {
+    try {
+        const venueNames = venues.map(v => v.name) // Extract names from the seed data
+        const result = await Venue.deleteMany({
+            name: { $in: venueNames }
+        })
+        console.log(
+            `✅ Removed ${result.deletedCount} seeded venues`
+        )
+    } catch (error) {
+        console.error(
+            "❌ Error removing seeded venues:",
+            error
+        )
+    }
+}
 module.exports = connectDB

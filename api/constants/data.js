@@ -17,7 +17,7 @@ const venues = [
                 id: "10",
                 name: "Badminton",
                 icon: "badminton",
-                price: 500,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -41,7 +41,7 @@ const venues = [
                 id: "11",
                 name: "Cricket",
                 icon: "cricket",
-                price: 1100,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -59,7 +59,7 @@ const venues = [
                 id: "12",
                 name: "Tennis",
                 icon: "tennis",
-                price: 900,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -98,7 +98,7 @@ const venues = [
                 id: "10",
                 name: "Badminton",
                 icon: "badminton",
-                price: 500,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -122,7 +122,7 @@ const venues = [
                 id: "11",
                 name: "Cricket",
                 icon: "cricket",
-                price: 1100,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -140,7 +140,7 @@ const venues = [
                 id: "12",
                 name: "Tennis",
                 icon: "tennis",
-                price: 900,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -180,7 +180,7 @@ const venues = [
                 id: "10",
                 name: "Badminton",
                 icon: "badminton",
-                price: 500,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -204,7 +204,7 @@ const venues = [
                 id: "11",
                 name: "Cricket",
                 icon: "cricket",
-                price: 1100,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -222,7 +222,7 @@ const venues = [
                 id: "12",
                 name: "Tennis",
                 icon: "tennis",
-                price: 900,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -262,7 +262,7 @@ const venues = [
                 id: "10",
                 name: "Badminton",
                 icon: "badminton",
-                price: 500,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -286,7 +286,7 @@ const venues = [
                 id: "11",
                 name: "Cricket",
                 icon: "cricket",
-                price: 1100,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -304,7 +304,7 @@ const venues = [
                 id: "12",
                 name: "Tennis",
                 icon: "tennis",
-                price: 900,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -344,7 +344,7 @@ const venues = [
                 id: "10",
                 name: "Badminton",
                 icon: "badminton",
-                price: 500,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -368,7 +368,7 @@ const venues = [
                 id: "11",
                 name: "Cricket",
                 icon: "cricket",
-                price: 1100,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -386,7 +386,7 @@ const venues = [
                 id: "12",
                 name: "Tennis",
                 icon: "tennis",
-                price: 900,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -426,7 +426,7 @@ const venues = [
                 id: "10",
                 name: "Badminton",
                 icon: "badminton",
-                price: 500,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -450,7 +450,7 @@ const venues = [
                 id: "11",
                 name: "Cricket",
                 icon: "cricket",
-                price: 1100,
+                price: 1,
                 courts: [
                     {
                         id: "10",
@@ -468,7 +468,7 @@ const venues = [
                 id: "12",
                 name: "Tennis",
                 icon: "tennis",
-                price: 900,
+                price: 1,
                 courts: [
                     {
                         id: "10",

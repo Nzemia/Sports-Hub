@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "expo-router"
 import { RootStackParamList } from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import Divider from "@/components/Divider"
 
 type StartScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -27,7 +28,7 @@ type StartScreenNavigationProp = NativeStackNavigationProp<
 >
 
 const ProfileScreen = () => {
-    const { theme } = useTheme()
+    const { theme, toggleTheme, isDarkMode } = useTheme()
 
     const navigation =
         useNavigation<StartScreenNavigationProp>()
@@ -300,14 +301,9 @@ const ProfileScreen = () => {
                     </View>
                 </View>
 
-                <View
-                    style={[
-                        styles.bottomContainer,
-                        {
-                            backgroundColor: theme.secondary
-                        }
-                    ]}
-                >
+                <Divider thickness={2} />
+
+                <View style={[styles.bottomContainer]}>
                     <View
                         style={{
                             padding: 10,
@@ -340,18 +336,35 @@ const ProfileScreen = () => {
                                 />
                             </View>
 
-                            <View style={{}}>
+                            <Pressable
+                                onPress={toggleTheme}
+                                style={({ pressed }) => [
+                                    {
+                                        alignItems:
+                                            "center",
+                                        justifyContent:
+                                            "center",
+                                        flexDirection:
+                                            "row",
+                                        opacity: pressed
+                                            ? 0.7
+                                            : 1
+                                    }
+                                ]}
+                            >
                                 <Text
-                                    style={[
-                                        styles.containerHeadText,
-                                        {
-                                            color: theme.text
-                                        }
-                                    ]}
+                                    style={{
+                                        color: theme.text,
+                                        fontSize: 16,
+                                        fontFamily:
+                                            fontFamily.bold
+                                    }}
                                 >
-                                    Theme
+                                    {isDarkMode
+                                        ? "Switch to Light Mode 🌞"
+                                        : "Switch to Dark Mode 🌙"}
                                 </Text>
-                            </View>
+                            </Pressable>
                         </Pressable>
 
                         <View
@@ -462,55 +475,7 @@ const ProfileScreen = () => {
                             }}
                         />
 
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 10,
-                                marginTop: 15,
-                                marginBottom: 10
-                            }}
-                        >
-                            <View
-                                style={{
-                                    width: 48,
-                                    height: 48,
-                                    borderRadius: 24,
-                                    backgroundColor:
-                                        "#E0E0E0",
-                                    justifyContent:
-                                        "center",
-                                    alignItems: "center"
-                                }}
-                            >
-                                <MaterialIcons
-                                    name="energy-savings-leaf"
-                                    size={24}
-                                    color={"green"}
-                                />
-                            </View>
-
-                            <View style={{}}>
-                                <Text
-                                    style={[
-                                        styles.containerHeadText,
-                                        {
-                                            color: theme.text
-                                        }
-                                    ]}
-                                >
-                                    Help & Support
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View
-                            style={{
-                                height: 1,
-                                borderColor: "#E0E0E0",
-                                borderWidth: 0.5
-                            }}
-                        />
+                       
 
                         <View
                             style={{

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
     FlatList,
     Image,
@@ -87,27 +86,15 @@ const PlayScreen: React.FC = () => {
 
     const { userId } = useContext(AuthContext)
 
-    useEffect(() => {
-        fetchGames()
-    }, [])
+    // useEffect(() => {
+    //     fetchGames()
+    // }, [])
 
     useEffect(() => {
         if (initialOption) {
             setOption(initialOption)
         }
     }, [initialOption])
-
-    const fetchGames = async () => {
-        try {
-            const response = await axios.get(
-                "http://10.16.13.213:3000/api/games"
-            )
-            setGames(response.data)
-        } catch (error) {
-            console.error("Failed to fetch games:", error)
-        }
-    }
-    //console.log("games", games)
 
     useEffect(() => {
         if (userId) {
@@ -121,10 +108,19 @@ const PlayScreen: React.FC = () => {
         }
     }, [userId])
 
+    useFocusEffect(
+        useCallback(() => {
+            if (userId) {
+                fetchGames()
+                fetchUpcomingGames()
+            }
+        }, [userId, route.params?.refresh])
+    )
+
     const fetchUser = async () => {
         try {
             const response = await axios.get<User>(
-                `http://10.16.13.213:3000/api/auth/user/${userId}`
+                `http://10.16.13.88:3000/api/auth/user/${userId}`
             )
             setUser(response.data)
         } catch (error) {
@@ -134,19 +130,35 @@ const PlayScreen: React.FC = () => {
             )
         }
     }
-    useFocusEffect(
-        useCallback(() => {
-            if (userId) {
-                fetchGames()
-            }
-        }, [userId])
-    )
+
+    const fetchGames = async () => {
+        try {
+            const response = await axios.get(
+                `http://10.16.13.88:3000/api/games?userId=${userId}`
+            )
+
+            // Sort games by creation date
+            const sortedGames = response.data.sort(
+                (a: Game, b: Game) => {
+                    return (
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                    )
+                }
+            )
+
+            setGames(sortedGames)
+        } catch (error) {
+            console.error("Failed to fetch games:", error)
+        }
+    }
+    //console.log("games", games)
 
     const fetchUpcomingGames = async () => {
         try {
             //console.log("user id", userId)
             const response = await axios.get(
-                `http://10.16.13.213:3000/api/games/upcoming/${userId}`
+                `http://10.16.13.88:3000/api/games/upcoming/${userId}`
             )
             setUpcomingGames(response.data)
         } catch (error) {
@@ -156,6 +168,13 @@ const PlayScreen: React.FC = () => {
             )
         }
     }
+    useEffect(() => {
+        if (route.params?.refresh) {
+            fetchGames()
+            fetchUpcomingGames()
+        }
+    }, [route.params?.refresh])
+
     //console.log("upcoming games", upcomingGames)
 
     return (
@@ -638,7 +657,11 @@ const PlayScreen: React.FC = () => {
             {option === "Calendar" && (
                 <FlatList<Game>
                     data={upcomingGames}
-                    keyExtractor={item => item._id}
+                    keyExtractor={item =>
+                        item.id?.toString() ||
+                        item._id?.toString() ||
+                        Math.random().toString()
+                    }
                     renderItem={({ item }) => (
                         <UpComingGame item={item} />
                     )}

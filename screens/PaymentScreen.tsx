@@ -86,91 +86,112 @@ const PaymentScreen: React.FC = () => {
             )
             return
         }
+
         try {
             setIsLoading(true)
 
-            // First initiate the payment
+            // Step 1: Initiate M-Pesa Payment
             const paymentResponse = await axios.post(
-                "http://10.16.13.213:3000/api/payment/initiate",
+                "http://10.16.13.88:3000/api/payment/initiate",
                 {
                     phoneNumber: formatted,
                     amount: Math.round(total),
                     orderId: `ORDER-${Date.now()}`
                 }
             )
+            // console.log(
+            //     "Payment response:",
+            //     paymentResponse.data
+            // )
 
-            if (paymentResponse.data.checkoutRequestID) {
+            // ✅ Fix: Only check for CheckoutRequestID, don't expect an immediate success confirmation
+            if (!paymentResponse.data.checkoutRequestID) {
                 Alert.alert(
-                    "Payment Initiated",
-                    "Please check your phone for the M-PESA prompt",
-                    [
-                        {
-                            text: "OK",
-                            onPress: async () => {
-                                try {
-                                    const bookingResponse =
-                                        await axios.post(
-                                            "http://10.16.13.213:3000/api/venues/book",
-                                            {
-                                                courtNumber:
-                                                    route
-                                                        .params
-                                                        .selectedCourt,
-                                                date: route
-                                                    .params
-                                                    .selectedDate,
-                                                time: route
-                                                    .params
-                                                    .selectedTime,
-                                                userId,
-                                                name: route
-                                                    .params
-                                                    .place,
-                                                game: route
-                                                    .params
-                                                    ?.gameId
-                                            }
-                                        )
+                    "Payment Failed",
+                    "M-Pesa request was not accepted. Try again."
+                )
+                return
+            }
 
-                                    if (
-                                        bookingResponse.status ===
-                                        200
-                                    ) {
-                                        Alert.alert(
-                                            "Success",
-                                            "Booking successful!",
-                                            [
-                                                {
-                                                    text: "OK",
-                                                    onPress:
-                                                        () =>
-                                                            navigation.navigate(
-                                                                "Play"
-                                                            )
-                                                }
-                                            ]
-                                        )
-                                    }
-                                } catch (bookingError) {
-                                    console.error(
-                                        "Booking error:",
-                                        bookingError
+            // ✅ Step 2: Notify User to Check Their Phone
+            Alert.alert(
+                "Payment Initiated",
+                "Please check your phone for the M-PESA prompt.",
+                [
+                    {
+                        text: "OK",
+                        onPress: async () => {
+                            try {
+                                // Step 3: Attempt Booking After Payment
+                                const bookingResponse =
+                                    await axios.post(
+                                        "http://10.16.13.88:3000/api/venues/book",
+                                        {
+                                            courtNumber:
+                                                route.params
+                                                    .selectedCourt,
+                                            date: route
+                                                .params
+                                                .selectedDate,
+                                            time: route
+                                                .params
+                                                .selectedTime,
+                                            userId,
+                                            name: route
+                                                .params
+                                                .place,
+                                            game: route
+                                                .params
+                                                ?.gameId
+                                        }
                                     )
-                                    // Alert.alert(
-                                    //     "Note",
-                                    //     "Payment initiated. Please complete the payment on your phone. The booking will be confirmed after payment."
-                                    // )
+
+                                if (
+                                    bookingResponse.status ===
+                                    200
+                                ) {
+                                    Alert.alert(
+                                        "Success",
+                                        "Booking successful!",
+                                        [
+                                            {
+                                                text: "OK",
+                                                onPress:
+                                                    () =>
+                                                        navigation.navigate(
+                                                            "Play"
+                                                        )
+                                            }
+                                        ]
+                                    )
+                                } else {
+                                    throw new Error(
+                                        "Booking failed. Try again."
+                                    )
                                 }
+                            } catch (bookingError) {
+                                console.error(
+                                    "Booking error:",
+                                    bookingError
+                                )
+                                Alert.alert(
+                                    "Booking Error",
+                                    "Payment was received, but booking failed. Please contact support."
+                                )
                             }
                         }
-                    ]
-                )
-            }
+                    }
+                ]
+            )
         } catch (error: any) {
-            const errorMessage =
-                error.response?.data?.message ||
-                "Please try again"
-            Alert.alert("Payment Initiation", errorMessage)
+            console.error(
+                "Payment initiation error:",
+                error.response?.data || error.message
+            )
+            Alert.alert(
+                "Error",
+                "Payment initiation failed. Please try again."
+            )
         } finally {
             setIsLoading(false)
         }

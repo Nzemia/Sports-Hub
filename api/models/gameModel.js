@@ -15,10 +15,6 @@ const gameSchema = new Schema(
             type: String,
             required: true
         },
-        time: {
-            type: String
-            //required: true
-        },
         activityAccess: {
             type: String,
             default: "public"
@@ -74,13 +70,19 @@ const gameSchema = new Schema(
             type: String,
             enum: ["upcoming", "ongoing", "completed"],
             default: "upcoming"
-        },
-        price: {
-            type: Number,
-            default: 0
         }
     },
     { timestamps: true }
+)
+
+gameSchema.index(
+    {
+        admin: 1,
+        sport: 1,
+        date: 1,
+        area: 1
+    },
+    { unique: true }
 )
 
 module.exports = mongoose.model("Game", gameSchema)

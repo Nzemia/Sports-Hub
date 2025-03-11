@@ -15,7 +15,7 @@ export type RootStackParamList = {
         taggedVenue?: Venue
         timeInterval?: string
     }
-    Play: undefined
+    Play: { initialOption?: string; refresh?: boolean }
     Game: {
         item: GameItem
     }
@@ -57,9 +57,6 @@ export type RootStackParamList = {
         place: string
         sports: string[]
         date: string
-        slot: string
-        startTime: string
-        endTime: string
         gameId: string
         bookings: Booking[]
     }
@@ -74,6 +71,20 @@ export interface Venue {
     image: string
     sportsAvailable: string[]
     bookings: Booking[]
+}
+
+interface UpComingGameProps {
+    item: {
+        _id: string
+        area: string
+        adminName: string
+        adminUrl: string
+        date: string
+        time: string
+        players: any[]
+        courtNumber?: string
+        isBooked?: boolean
+    }
 }
 
 export interface Court {
@@ -94,11 +105,13 @@ export interface GameItem {
     adminUrl: string
     area: string
     date: string
-    time: string
+    //time: string
     isUserAdmin: boolean
     matchFull: boolean
     requests: RequestItem[]
     players: Player[]
+    isBooked?: boolean
+    sport?: string
 }
 
 export interface RequestItem {

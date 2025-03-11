@@ -4,10 +4,13 @@ import {
     Pressable,
     StyleSheet,
     Text,
-    TextInput,
     View
 } from "react-native"
-import React, { useState } from "react"
+import React, {
+    useContext,
+    useEffect,
+    useState
+} from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"
@@ -15,11 +18,70 @@ import { fontFamily } from "@/constants/fonts"
 import CustomTextInput from "@/components/TextInput"
 import { data, venues } from "@/constants/data"
 import VenueCard from "@/components/VenueCard"
+import { AuthContext } from "@/context/AuthContext"
+import axios from "axios"
+import { jwtDecode } from "jwt-decode"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const BookScreen = () => {
     const { theme } = useTheme()
 
+    const { userId, setUserId } = useContext(AuthContext)
+
     const [search, setSearch] = useState("")
+    const [user, setUser] = useState<any>("")
+
+    useEffect(() => {
+        fetchUser(setUser, setUserId)
+    }, [])
+
+    const fetchUser = async (
+        setUser: Function,
+        setUserId: Function
+    ) => {
+        try {
+            const token = await AsyncStorage.getItem(
+                "token"
+            )
+
+            if (!token) {
+                console.error("No token found")
+                return
+            }
+
+            // Decode token and extract userId
+            const decodedToken: { userId?: string } =
+                jwtDecode(token)
+
+            if (!decodedToken.userId) {
+                throw new Error(
+                    "User ID not found in token"
+                )
+            }
+
+            const userId = decodedToken.userId
+            setUserId(userId)
+
+            const response = await axios.get(
+                `http://10.16.13.88:3000/api/auth/user/${userId}`
+            )
+
+            if (!response.data) {
+                console.error(
+                    "User data is empty:",
+                    response.data
+                )
+                return
+            }
+
+            setUser(response.data)
+        } catch (error) {
+            console.error(
+                "Error fetching user data:",
+                error
+            )
+        }
+    }
 
     const handleSearch = () => {}
     return (
@@ -51,7 +113,7 @@ const BookScreen = () => {
                             { color: theme.text }
                         ]}
                     >
-                        Frank
+                        Venues
                     </Text>
                     <MaterialIcons
                         name={"keyboard-arrow-down"}
@@ -80,14 +142,27 @@ const BookScreen = () => {
                     />
 
                     <Pressable>
-                        <Image
-                            source={require("../assets/images/profileavatar.png")}
-                            style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 15
-                            }}
-                        />
+                        {user?.image ? (
+                            <Image
+                                source={{
+                                    uri: user?.image
+                                }}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15
+                                }}
+                            />
+                        ) : (
+                            <Image
+                                source={require("../assets/images/profileavatar.png")}
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 15
+                                }}
+                            />
+                        )}
                     </Pressable>
                 </View>
             </View>
@@ -187,7 +262,11 @@ const BookScreen = () => {
                 renderItem={({ item }) => (
                     <VenueCard item={item} />
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={item =>
+                    item.id?.toString() ||
+                    item._id?.toString() ||
+                    Math.random().toString()
+                }
                 contentContainerStyle={{
                     paddingBottom: 20
                 }}

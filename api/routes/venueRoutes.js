@@ -42,7 +42,7 @@ router.post("/book", async (req, res) => {
     const { courtNumber, date, time, userId, name, game } =
         req.body
 
-    console.log("game", game)
+    //console.log("game", game)
 
     try {
         const venue = await Venue.findOne({ name: name })
@@ -80,7 +80,7 @@ router.post("/book", async (req, res) => {
         await venue.save()
 
         // Update game with booking details
-        await Game.findByIdAndUpdate(game, {
+        await game.findByIdAndUpdate(game, {
             isBooked: true,
             courtNumber: courtNumber
         })

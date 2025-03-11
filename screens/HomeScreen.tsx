@@ -166,7 +166,7 @@ const HomeScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.13.213:3000/api/auth/user/${userId}`
+                `http://10.16.13.88:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {
@@ -187,26 +187,26 @@ const HomeScreen = () => {
     }
     //console.log("user", userId)
 
-    // useEffect(() => {
-    //     if (userId) {
-    //         fetchUpcomingGames()
-    //     }
-    // }, [userId])
-    // const fetchUpcomingGames = async () => {
-    //     try {
-    //         const response = await axios.get(
-    //             `http://10.16.13.213:3000/api/games/upcoming?userId=${userId}`
-    //         )
-    //         setUpcomingGames(response.data)
-    //     } catch (error) {
-    //         console.error(
-    //             "Failed to fetch upcoming games:",
-    //             error
-    //         )
-    //     }
-    // }
+    useEffect(() => {
+        if (userId) {
+            fetchUpcomingGames()
+        }
+    }, [userId])
+    const fetchUpcomingGames = async () => {
+        try {
+            const response = await axios.get(
+                `http://10.16.13.88:3000/api/games/upcoming/${userId}`
+            )
+            setUpcomingGames(response.data)
+        } catch (error) {
+            console.error(
+                "Failed to fetch upcoming games:",
+                error
+            )
+        }
+    }
 
-    // console.log("user", upcomingGames?.length)
+    //console.log("user", upcomingGames?.length)
 
     return (
         <SafeAreaView
@@ -395,7 +395,11 @@ const HomeScreen = () => {
                         alignItems: "center"
                     }}
                 >
-                    <Pressable>
+                    <Pressable
+                        onPress={() =>
+                            navigation.navigate("Play")
+                        }
+                    >
                         <View>
                             <Image
                                 source={require("../assets/images/kenyaplayersplaying.jpeg")}
@@ -443,7 +447,11 @@ const HomeScreen = () => {
                         </Pressable>
                     </Pressable>
 
-                    <Pressable>
+                    <Pressable
+                        onPress={() =>
+                            navigation.navigate("Play")
+                        }
+                    >
                         <View>
                             <Image
                                 source={{

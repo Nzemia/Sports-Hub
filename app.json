@@ -8,6 +8,12 @@
         "scheme": "myapp",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
+        "owner": "nzemia",
+        "extra": {
+            "eas": {
+                "projectId": "0361e3d0-5b6c-45fc-8472-5df9b498d509"
+            }
+        },
         "ios": {
             "supportsTablet": true
         },

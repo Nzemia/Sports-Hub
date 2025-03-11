@@ -60,6 +60,16 @@ const Game: React.FC<GameProps> = ({ item }) => {
     const isUserInRequests = item?.requests.some(
         request => request.userId === userId
     )
+
+    // const handleJoinRequest = () => {
+    //     if (!item.isPublic) {
+    //         Alert.alert(
+    //             "Private Game",
+    //             "This is a private game. You need an invitation to join."
+    //         )
+    //         return
+    //     }
+    // }
     return (
         <SafeAreaView
             style={{
@@ -322,6 +332,33 @@ const Game: React.FC<GameProps> = ({ item }) => {
                                 </View>
                             </View>
                         )}
+
+                        {/* {!item.isUserAdmin &&
+                            !item.matchFull && (
+                                <Pressable
+                                    onPress={
+                                        handleJoinRequest
+                                    }
+                                    style={[
+                                        styles.joinButton,
+                                        !item.isPublic &&
+                                            styles.disabledButton
+                                    ]}
+                                    disabled={
+                                        !item.isPublic
+                                    }
+                                >
+                                    <Text
+                                        style={
+                                            styles.joinButtonText
+                                        }
+                                    >
+                                        {item.isPublic
+                                            ? "Join Game"
+                                            : "Private Game"}
+                                    </Text>
+                                </Pressable>
+                            )} */}
                     </View>
                 </View>
             </Pressable>

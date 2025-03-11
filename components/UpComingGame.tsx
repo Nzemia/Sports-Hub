@@ -8,7 +8,10 @@ import {
 import React from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
-import { RootStackParamList } from "@/configs/global"
+import {
+    RootStackParamList,
+    UpComingGameProps
+} from "@/configs/global"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useNavigation } from "expo-router"
 import { fontFamily } from "@/constants/fonts"
@@ -18,11 +21,14 @@ type GameScreenNavigationProp = NativeStackNavigationProp<
     "Game"
 >
 
-const UpComingGame = ({ item }: any) => {
+const UpComingGame: React.FC<UpComingGameProps> = ({
+    item
+}) => {
     const { theme } = useTheme()
 
     const navigation =
         useNavigation<GameScreenNavigationProp>()
+    //console.log("item", item)
     return (
         <SafeAreaView
             style={{
@@ -33,7 +39,9 @@ const UpComingGame = ({ item }: any) => {
             <Pressable
                 onPress={() =>
                     navigation.navigate("Game", {
-                        item: item
+                        item: {
+                            ...item
+                        }
                     })
                 }
                 style={[
@@ -83,7 +91,7 @@ const UpComingGame = ({ item }: any) => {
                                 }
                             ]}
                         >
-                            {item?.adminName}'s Badminton
+                            {item?.adminName}'s {""}
                             Game
                         </Text>
 
@@ -96,7 +104,8 @@ const UpComingGame = ({ item }: any) => {
                             ]}
                             numberOfLines={2}
                         >
-                            {item?.area}
+                            {item?.area ||
+                                "Location not specified"}
                         </Text>
 
                         <View
@@ -109,6 +118,7 @@ const UpComingGame = ({ item }: any) => {
                                 borderColor: "#E0E0E0",
                                 borderWidth: 2,
                                 width: "100%"
+                                //backgroundColor: "#56cc79"
                             }}
                         >
                             {item?.isBooked ? (
@@ -148,21 +158,23 @@ const UpComingGame = ({ item }: any) => {
                                     </View>
                                 </>
                             ) : (
-                                <Text
-                                    style={[
-                                        styles.bookedText,
+                                <View>
+                                    <Text
+                                        style={[
+                                            styles.bookedText,
 
-                                        {
-                                            color: theme.text,
-                                            textAlign:
-                                                "center",
-                                            fontFamily:
-                                                fontFamily.bold
-                                        }
-                                    ]}
-                                >
-                                    02:00 PM - 06:00 PM
-                                </Text>
+                                            {
+                                                color: theme.text,
+                                                textAlign:
+                                                    "center",
+                                                fontFamily:
+                                                    fontFamily.bold
+                                            }
+                                        ]}
+                                    >
+                                        Available
+                                    </Text>
+                                </View>
                             )}
                         </View>
                     </View>
@@ -236,8 +248,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10
     },
     bookedText: {
-        fontSize: 13,
-        fontFamily: fontFamily.medium
+        fontSize: 14,
+        fontFamily: fontFamily.bold
     },
     goingText: {
         fontFamily: fontFamily.bold,

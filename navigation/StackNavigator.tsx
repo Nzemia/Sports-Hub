@@ -31,6 +31,7 @@ import GameSetUpScreen from "@/screens/GameSetUpScreen"
 import SlotScreen from "@/screens/SlotScreen"
 import ManageRequestsScreen from "@/screens/ManageRequestsScreen"
 import PaymentScreen from "@/screens/PaymentScreen"
+import PlayersScreen from "@/screens/PlayersScreen"
 
 const StackNavigator = () => {
     const { theme } = useTheme()
@@ -211,7 +212,7 @@ const StackNavigator = () => {
                     name="Create"
                     component={CreateActivity}
                     options={{ headerShown: false }}
-                />
+                />               
                 <Stack.Screen
                     name="Play"
                     component={PlayScreen}
@@ -250,6 +251,11 @@ const StackNavigator = () => {
                 <Stack.Screen
                     name="Manage"
                     component={ManageRequestsScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Players"
+                    component={PlayersScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

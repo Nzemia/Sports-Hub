@@ -88,7 +88,7 @@ const GameSetUpScreen = () => {
     const sendJoinRequest = async (gameId: string) => {
         try {
             const response = await axios.post(
-                `http://10.16.13.213:3000/api/games/${gameId}/request`,
+                `http://10.16.13.88:3000/api/games/${gameId}/request`,
                 {
                     userId,
                     comment
@@ -138,7 +138,7 @@ const GameSetUpScreen = () => {
             }
 
             const response = await axios.get(
-                `http://10.16.13.213:3000/api/games/${gameId}/requests`
+                `http://10.16.13.88:3000/api/games/${gameId}/requests`
             )
             setRequests(response.data)
         } catch (error) {
@@ -160,7 +160,7 @@ const GameSetUpScreen = () => {
                 return
             }
             const response = await axios.get(
-                `http://10.16.13.213:3000/api/games/${gameId}/players`
+                `http://10.16.13.88:3000/api/games/${gameId}/players`
             )
             setPlayers(response.data)
         } catch (error) {
@@ -174,7 +174,7 @@ const GameSetUpScreen = () => {
         const fetchVenues = async () => {
             try {
                 const response = await axios.get(
-                    "http://10.16.13.213:3000/api/venues"
+                    "http://10.16.13.88:3000/api/venues"
                 )
                 setVenues(response.data)
             } catch (error) {
@@ -190,9 +190,7 @@ const GameSetUpScreen = () => {
 
     //console.log("ver", venue)
 
-    const [startTime, endTime] = route?.params?.item?.time
-        ?.split(" - ")
-        .map(time => time.trim())
+   
 
     //console.log("comment", route?.params?.item?.matchFull)
 
@@ -201,7 +199,7 @@ const GameSetUpScreen = () => {
     ) => {
         try {
             const response = await axios.post(
-                "http://10.16.13.213:3000/api/games/toggle-match-full",
+                "http://10.16.13.88:3000/api/games/toggle-match-full",
                 { gameId }
             )
 
@@ -469,8 +467,7 @@ const GameSetUpScreen = () => {
                                     color: theme.text
                                 }
                             ]}
-                        >
-                            {route?.params?.item?.time} •{" "}
+                        >                           
                             {route?.params?.item?.date}
                         </Text>
                     </View>
@@ -486,11 +483,7 @@ const GameSetUpScreen = () => {
                                         venue?.sportsAvailable ||
                                         [],
                                     date: route?.params
-                                        ?.item?.date,
-                                    slot: route?.params
-                                        ?.item?.time,
-                                    startTime: startTime,
-                                    endTime: endTime,
+                                        ?.item?.date,                                  
                                     gameId: route?.params
                                         ?.item?._id,
                                     bookings:
@@ -623,7 +616,7 @@ const GameSetUpScreen = () => {
                                 }
                             ]}
                         >
-                            Players (2)
+                            Players 
                         </Text>
 
                         <Ionicons

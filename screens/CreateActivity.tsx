@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
     StyleSheet,
     ScrollView,
@@ -6,7 +5,8 @@ import {
     View,
     Pressable,
     Alert,
-    TextInput
+    TextInput,
+    TouchableOpacity
 } from "react-native"
 import React, {
     useContext,
@@ -81,58 +81,93 @@ const CreateActivity = () => {
 
     const { userId } = useContext(AuthContext)
 
+    useEffect(() => {
+        //console.log("Route params:", route.params)
+        if (route.params?.initialOption) {
+            setOption(route.params.initialOption)
+        }
+    }, [route.params?.initialOption])
+
+    useEffect(() => {
+        if (route.params?.timeInterval) {
+            setTimeInterval(route.params.timeInterval)
+        }
+    }, [route.params?.timeInterval])
+
+    useEffect(() => {
+        if (route.params?.taggedVenue) {
+            setTaggedVenue(route.params.taggedVenue)
+            setArea(route.params.taggedVenue.name)
+        }
+    }, [route.params?.taggedVenue])
+
     const createGame = async () => {
+        if (!sport || !area || !date || !noOfPlayers) {
+            Alert.alert(
+                "Error",
+                "Please fill all required fields"
+            )
+            return
+        }
+
         setIsLoading(true)
         try {
-            const admin = userId
-            const time = timeInterval
             const gameData = {
                 sport,
-                area: taggedVenue,
+                area: taggedVenue?.name,
                 date,
-                time,
-                admin,
-                totalPlayers: noOfPlayers
+                admin: userId,
+                totalPlayers: noOfPlayers,
+                isPublic: selected === "Public"
             }
 
             const response = await axios.post(
-                "http://10.16.13.213:3000/api/games/createGame",
+                "http://10.16.13.88:3000/api/games/createGame",
                 gameData
             )
 
-            if (response.status === 200) {
-                console.log("Game created Successfully")
+            if (response.status === 201) {
+                // Clear form
                 setSport("")
                 setArea("")
                 setDate("")
                 setTimeInterval("")
+                setNoOfPlayers("")
+                setAdditionalInstructions("")
 
-                navigation2.replace("Play")
-            }
-        } catch (error) {
-            console.error("Failed to create game:", error)
-            setIsLoading(false)
-            setTimeout(() => {
+                // Show success message
                 Alert.alert(
-                    "Error!",
-                    "Failed to create game",
+                    "Success",
+                    "Game created successfully!",
                     [
                         {
-                            text: "Cancel",
-                            onPress: () =>
-                                console.log(
-                                    "Cancel Pressed"
-                                ),
-                            style: "cancel"
-                        },
-                        {
                             text: "OK",
-                            onPress: () =>
-                                navigation.goBack()
+                            onPress: () => {
+                                // Force navigation to Play screen
+                                navigation2.reset({
+                                    index: 0,
+                                    routes: [
+                                        {
+                                            name: "Play",
+                                            params: {
+                                                initialOption:
+                                                    "My Sports",
+                                                refresh:
+                                                    true
+                                            }
+                                        }
+                                    ]
+                                })
+                            }
                         }
                     ]
                 )
-            }, 100)
+            }
+        } catch (error: any) {
+            const message =
+                error.response?.data?.message ||
+                "Failed to create game"
+            Alert.alert("Error", message)
         } finally {
             setIsLoading(false)
         }
@@ -172,15 +207,6 @@ const CreateActivity = () => {
                 : date.toISOString()
         )
     }
-
-    useEffect(() => {
-        if (route.params?.taggedVenue !== undefined) {
-            setTaggedVenue(route.params.taggedVenue)
-        }
-        if (route.params?.timeInterval !== undefined) {
-            setTimeInterval(route.params.timeInterval || "")
-        }
-    }, [route.params])
 
     return (
         <>
@@ -296,10 +322,11 @@ const CreateActivity = () => {
                                 </Text>
                                 <CustomTextInput
                                     value={
-                                        area ||
-                                        (taggedVenue
-                                            ? taggedVenue.name
-                                            : "")
+                                        taggedVenue?.name
+                                        //area ||
+                                        // (taggedVenue
+                                        //     ? taggedVenue.name
+                                        //     : "")
                                     }
                                     onChangeText={setArea}
                                     style={{
@@ -391,7 +418,7 @@ const CreateActivity = () => {
                         />
 
                         {/** time */}
-                        <Pressable
+                        {/* <Pressable
                             onPress={() =>
                                 navigation.navigate("Time")
                             }
@@ -420,9 +447,7 @@ const CreateActivity = () => {
                                     Time
                                 </Text>
                                 <TextInput
-                                    value={
-                                        timeInterval || ""
-                                    }
+                                    value={timeInterval}
                                     style={{
                                         marginTop: 7,
                                         fontSize: 15,
@@ -432,7 +457,8 @@ const CreateActivity = () => {
                                             theme.text,
                                         borderWidth: 2,
                                         borderRadius: 5,
-                                        paddingHorizontal: 10
+                                        paddingHorizontal: 10,
+                                        color: theme.text
                                     }}
                                     placeholderTextColor={
                                         timeInterval
@@ -455,7 +481,7 @@ const CreateActivity = () => {
                                 borderWidth: 0.7,
                                 height: 1
                             }}
-                        />
+                        /> */}
 
                         {/** public or invite only */}
                         <View
@@ -875,9 +901,9 @@ const CreateActivity = () => {
                     </View>
 
                     <View style={{ paddingHorizontal: 10 }}>
-                        <CustomButton
-                            title={"Create Activity"}
+                        <TouchableOpacity
                             onPress={createGame}
+                            disabled={isLoading}
                             style={{
                                 backgroundColor: "#07bc0c",
                                 marginTop: "auto",
@@ -886,8 +912,18 @@ const CreateActivity = () => {
                                 borderRadius: 4,
                                 width: "100%"
                             }}
-                            loading={isLoading}
-                        />
+                        >
+                            <Text
+                                style={{
+                                    textAlign: "center",
+                                    color: "white",
+                                    fontSize: 15,
+                                    fontWeight: "500"
+                                }}
+                            >
+                                Create Activity
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     <DatePickerModal
@@ -898,89 +934,6 @@ const CreateActivity = () => {
                     />
                 </ScrollView>
             </SafeAreaView>
-
-            {/* <Modal
-                onBackdropPress={() =>
-                    setModalVisible(!modalVisible)
-                }
-                swipeDirection={["up", "down"]}
-                swipeThreshold={200}
-                modalAnimation={
-                    new SlideAnimation({
-                        slideFrom: "bottom"
-                    })
-                }
-                onHardwareBackPress={() =>
-                    setModalVisible(!modalVisible)
-                }
-                visible={modalVisible}
-                onTouchOutside={() =>
-                    setModalVisible(!modalVisible)
-                }
-            >
-                <ModalContent
-                    style={{
-                        width: "100%",
-                        height: 400,
-                        backgroundColor: "white"
-                    }}
-                >
-                    <View>
-                        <Text
-                            style={{
-                                textAlign: "center",
-                                fontSize: 16,
-                                fontWeight: "bold"
-                            }}
-                        >
-                            Choose date/ time to rehost
-                        </Text>
-
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 15,
-                                flexWrap: "wrap",
-                                marginVertical: 20
-                            }}
-                        >
-                            {dates?.map((item, index) => (
-                                <Pressable
-                                    onPress={() =>
-                                        selectDate(
-                                            item?.actualDate
-                                        )
-                                    }
-                                    style={{
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        borderColor:
-                                            "#E0E0E0",
-                                        borderWidth: 1,
-                                        width: "30%",
-                                        justifyContent:
-                                            "center",
-                                        alignItems: "center"
-                                    }}
-                                >
-                                    <Text>
-                                        {item?.displayDate}
-                                    </Text>
-                                    <Text
-                                        style={{
-                                            color: "gray",
-                                            marginTop: 8
-                                        }}
-                                    >
-                                        {item?.dayOfWeek}
-                                    </Text>
-                                </Pressable>
-                            ))}
-                        </View>
-                    </View>
-                </ModalContent>
-            </Modal> */}
         </>
     )
 }
