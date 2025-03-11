@@ -624,7 +624,6 @@ const SlotScreen = () => {
                                         fontFamily.regular
                                 }}
                             >
-                                {/* 06:30 AM */}
                                 {route?.params?.startTime
                                     ? route?.params
                                           ?.startTime
@@ -894,7 +893,7 @@ const SlotScreen = () => {
                                     court.name
                                 ) ? (
                                     <Pressable
-                                        key={index}
+                                        key={court.id}
                                         onPress={() =>
                                             setSelectedCourt(
                                                 court.name

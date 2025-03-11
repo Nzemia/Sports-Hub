@@ -35,13 +35,15 @@ interface Game {
     _id: string
     sport: string
     date: string
-    time: string
     area: string
     players: Player[]
     totalPlayers: number
     adminName: string
     adminUrl: string
     matchFull: boolean
+    isUserAdmin: boolean
+    activityAccess: "public" | "invite only"
+    createdAt: string
 }
 
 interface Player {
@@ -86,10 +88,11 @@ const PlayScreen: React.FC = () => {
 
     const { userId } = useContext(AuthContext)
 
-    // useEffect(() => {
-    //     fetchGames()
-    // }, [])
-
+    useEffect(() => {
+        if (userId) {
+            fetchGames()
+        }
+    }, [userId, option])
     useEffect(() => {
         if (initialOption) {
             setOption(initialOption)
@@ -134,17 +137,47 @@ const PlayScreen: React.FC = () => {
     const fetchGames = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/games?userId=${userId}`
+                `http://10.16.13.88:3000/api/games`
             )
 
-            // Sort games by creation date
-            const sortedGames = response.data.sort(
-                (a: Game, b: Game) => {
-                    return (
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
+            // Filter games based on the selected option
+            const allGames = response.data
+            let filteredGames
+
+            switch (option) {
+                case "My Sports":
+                    // Show only games where user is admin or player
+                    filteredGames = allGames.filter(
+                        (game: Game) =>
+                            game.isUserAdmin ||
+                            game.players.some(
+                                player =>
+                                    player._id === userId
+                            )
                     )
-                }
+                    break
+                case "Other Sports":
+                    // Show public games where user is not admin or player
+                    filteredGames = allGames.filter(
+                        (game: Game) =>
+                            game.activityAccess ===
+                                "public" &&
+                            !game.isUserAdmin &&
+                            !game.players.some(
+                                player =>
+                                    player._id === userId
+                            )
+                    )
+                    break
+                default:
+                    filteredGames = allGames
+            }
+
+            // Sort games by creation date
+            const sortedGames = filteredGames.sort(
+                (a: Game, b: Game) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
             )
 
             setGames(sortedGames)
@@ -200,6 +233,13 @@ const PlayScreen: React.FC = () => {
                             gap: 5
                         }}
                     >
+                        <Pressable onPress={() => navigation.goBack()}>
+                            <Ionicons
+                                name={"arrow-back"}
+                                size={24}
+                                color={theme.text}
+                            />
+                        </Pressable>
                         <Text
                             style={[
                                 styles.headerText,
@@ -210,11 +250,6 @@ const PlayScreen: React.FC = () => {
                         >
                             Play Screen
                         </Text>
-                        <MaterialIcons
-                            name={"keyboard-arrow-down"}
-                            size={24}
-                            color={theme.text}
-                        />
                     </View>
 
                     <View
@@ -668,6 +703,20 @@ const PlayScreen: React.FC = () => {
                     contentContainerStyle={{
                         paddingBottom: 20
                     }}
+                />
+            )}
+
+            {option === "Other Sports" && (
+                <FlatList<Game>
+                    showsVerticalScrollIndicator={false}
+                    data={games}
+                    contentContainerStyle={{
+                        paddingBottom: 200
+                    }}
+                    keyExtractor={item => item._id}
+                    renderItem={({ item }) => (
+                        <Game item={item} />
+                    )}
                 />
             )}
         </SafeAreaView>

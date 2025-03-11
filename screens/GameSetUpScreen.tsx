@@ -85,6 +85,10 @@ const GameSetUpScreen = () => {
             item.name === route?.params?.item?.area
     )
 
+    const canToggleMatchFull = () => {
+        return route?.params?.item?.isUserAdmin === true
+    }
+
     const sendJoinRequest = async (gameId: string) => {
         try {
             const response = await axios.post(
@@ -95,19 +99,11 @@ const GameSetUpScreen = () => {
                 }
             )
 
-            if (response.status == 200) {
+            if (response.status === 200) {
                 Alert.alert(
                     "Request Sent",
                     "Please wait for the host to accept!",
                     [
-                        {
-                            text: "Cancel",
-                            onPress: () =>
-                                console.log(
-                                    "Cancel Pressed"
-                                ),
-                            style: "cancel"
-                        },
                         {
                             text: "OK",
                             onPress: () =>
@@ -116,11 +112,11 @@ const GameSetUpScreen = () => {
                     ]
                 )
             }
-            // console.log(
-            //     "Request sent successfully:",
-            //     response.data
-            // )
-        } catch (error) {
+        } catch (error: any) {
+            const errorMessage =
+                error.response?.data?.message ||
+                "Failed to send request"
+            Alert.alert("Error", errorMessage)
             console.error("Failed to send request:", error)
         }
     }
@@ -189,8 +185,6 @@ const GameSetUpScreen = () => {
     }, [])
 
     //console.log("ver", venue)
-
-   
 
     //console.log("comment", route?.params?.item?.matchFull)
 
@@ -420,42 +414,45 @@ const GameSetUpScreen = () => {
                             </Text>
                         </View>
 
-                        <View
-                            style={{
-                                marginLeft: "auto",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 6
-                            }}
-                        >
-                            <Text
-                                style={[
-                                    styles.matchFullText,
-                                    {
-                                        color: theme.text
-                                    }
-                                ]}
+                        {route?.params?.item
+                            ?.isUserAdmin && (
+                            <View
+                                style={{
+                                    marginLeft: "auto",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    gap: 6
+                                }}
                             >
-                                Match Full
-                            </Text>
-                            <FontAwesome
-                                onPress={() =>
-                                    toggleMatchFullStatus(
+                                <Text
+                                    style={[
+                                        styles.matchFullText,
+                                        {
+                                            color: theme.text
+                                        }
+                                    ]}
+                                >
+                                    Match Full
+                                </Text>
+                                <FontAwesome
+                                    onPress={() =>
+                                        toggleMatchFullStatus(
+                                            route?.params
+                                                ?.item?._id
+                                        )
+                                    }
+                                    name={
+                                        matchFull ||
                                         route?.params?.item
-                                            ?._id
-                                    )
-                                }
-                                name={
-                                    matchFull ||
-                                    route?.params?.item
-                                        ?.matchFull == true
-                                        ? "toggle-on"
-                                        : "toggle-off"
-                                }
-                                size={24}
-                                color={theme.text}
-                            />
-                        </View>
+                                            ?.matchFull
+                                            ? "toggle-on"
+                                            : "toggle-off"
+                                    }
+                                    size={24}
+                                    color={theme.text}
+                                />
+                            </View>
+                        )}
                     </View>
 
                     {/** date time */}
@@ -467,7 +464,7 @@ const GameSetUpScreen = () => {
                                     color: theme.text
                                 }
                             ]}
-                        >                           
+                        >
                             {route?.params?.item?.date}
                         </Text>
                     </View>
@@ -483,7 +480,7 @@ const GameSetUpScreen = () => {
                                         venue?.sportsAvailable ||
                                         [],
                                     date: route?.params
-                                        ?.item?.date,                                  
+                                        ?.item?.date,
                                     gameId: route?.params
                                         ?.item?._id,
                                     bookings:
@@ -616,7 +613,7 @@ const GameSetUpScreen = () => {
                                 }
                             ]}
                         >
-                            Players 
+                            Players
                         </Text>
 
                         <Ionicons
@@ -1164,6 +1161,15 @@ const GameSetUpScreen = () => {
                             marginHorizontal: 10,
                             borderRadius: 4
                         }}
+                        onPress={() =>
+                            navigation.navigate("Chat", {
+                                gameId: route?.params?.item
+                                    ?._id,
+                                gameName:
+                                    route?.params?.item
+                                        ?.sport
+                            })
+                        }
                     >
                         <Text style={[styles.gameChatText]}>
                             GAME CHAT
@@ -1221,13 +1227,29 @@ const GameSetUpScreen = () => {
                             </Text>
                         </Pressable>
                         <Pressable
-                            onPress={() =>
-                                setModalVisible(
-                                    !modalVisible
-                                )
+                            onPress={() => {
+                                if (
+                                    route?.params?.item
+                                        ?.matchFull
+                                ) {
+                                    Alert.alert(
+                                        "Game Full",
+                                        "This game is full and not accepting new players"
+                                    )
+                                    return
+                                }
+                                setModalVisible(true)
+                            }}
+                            disabled={
+                                route?.params?.item
+                                    ?.matchFull
                             }
                             style={{
-                                backgroundColor: "#07bc0c",
+                                backgroundColor: route
+                                    ?.params?.item
+                                    ?.matchFull
+                                    ? "#ccc"
+                                    : "#07bc0c",
                                 marginTop: "auto",
                                 marginBottom: 30,
                                 padding: 15,
@@ -1244,7 +1266,10 @@ const GameSetUpScreen = () => {
                                     }
                                 ]}
                             >
-                                JOIN GAME
+                                {route?.params?.item
+                                    ?.matchFull
+                                    ? "GAME FULL"
+                                    : "JOIN GAME"}
                             </Text>
                         </Pressable>
                     </View>

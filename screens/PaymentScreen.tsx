@@ -96,15 +96,10 @@ const PaymentScreen: React.FC = () => {
                 {
                     phoneNumber: formatted,
                     amount: Math.round(total),
-                    orderId: `ORDER-${Date.now()}`
+                    orderId: orderId
                 }
             )
-            // console.log(
-            //     "Payment response:",
-            //     paymentResponse.data
-            // )
 
-            // ✅ Fix: Only check for CheckoutRequestID, don't expect an immediate success confirmation
             if (!paymentResponse.data.checkoutRequestID) {
                 Alert.alert(
                     "Payment Failed",
@@ -113,84 +108,64 @@ const PaymentScreen: React.FC = () => {
                 return
             }
 
-            // ✅ Step 2: Notify User to Check Their Phone
-            Alert.alert(
-                "Payment Initiated",
-                "Please check your phone for the M-PESA prompt.",
-                [
+            // Step 2: Book the slot
+            try {
+                const bookingResponse = await axios.post(
+                    "http://10.16.13.88:3000/api/venues/book",
                     {
-                        text: "OK",
-                        onPress: async () => {
-                            try {
-                                // Step 3: Attempt Booking After Payment
-                                const bookingResponse =
-                                    await axios.post(
-                                        "http://10.16.13.88:3000/api/venues/book",
-                                        {
-                                            courtNumber:
-                                                route.params
-                                                    .selectedCourt,
-                                            date: route
-                                                .params
-                                                .selectedDate,
-                                            time: route
-                                                .params
-                                                .selectedTime,
-                                            userId,
-                                            name: route
-                                                .params
-                                                .place,
-                                            game: route
-                                                .params
-                                                ?.gameId
-                                        }
-                                    )
-
-                                if (
-                                    bookingResponse.status ===
-                                    200
-                                ) {
-                                    Alert.alert(
-                                        "Success",
-                                        "Booking successful!",
-                                        [
-                                            {
-                                                text: "OK",
-                                                onPress:
-                                                    () =>
-                                                        navigation.navigate(
-                                                            "Play"
-                                                        )
-                                            }
-                                        ]
-                                    )
-                                } else {
-                                    throw new Error(
-                                        "Booking failed. Try again."
-                                    )
-                                }
-                            } catch (bookingError) {
-                                console.error(
-                                    "Booking error:",
-                                    bookingError
-                                )
-                                Alert.alert(
-                                    "Booking Error",
-                                    "Payment was received, but booking failed. Please contact support."
-                                )
-                            }
-                        }
+                        courtNumber:
+                            route.params.selectedCourt,
+                        date: route.params.selectedDate,
+                        time: route.params.selectedTime,
+                        userId,
+                        name: route.params.place,
+                        game: route.params?.gameId,
+                        paymentOrderId: orderId // Add this to link payment with booking
                     }
-                ]
-            )
+                )
+
+                if (bookingResponse.status === 200) {
+                    // Update the game's booking status
+                    if (route.params?.gameId) {
+                        await axios.patch(
+                            `http://10.16.13.88:3000/api/games/${route.params.gameId}/booking-status`,
+                            {
+                                isBooked: true,
+                                courtNumber:
+                                    route.params
+                                        .selectedCourt
+                            }
+                        )
+                    }
+
+                    // Navigate back to Play screen
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Play" }]
+                    })
+                }
+            } catch (bookingError) {
+                console.error(
+                    "Booking error:",
+                    bookingError
+                )
+                Alert.alert(
+                    "Booking Status",
+                    "Your payment was successful. Please wait while we confirm your booking."
+                )
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Play" }]
+                })
+            }
         } catch (error: any) {
             console.error(
-                "Payment initiation error:",
+                "Payment error:",
                 error.response?.data || error.message
             )
             Alert.alert(
                 "Error",
-                "Payment initiation failed. Please try again."
+                "Payment failed. Please try again."
             )
         } finally {
             setIsLoading(false)

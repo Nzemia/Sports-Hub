@@ -39,59 +39,44 @@ router.get("/", async (req, res) => {
 
 // Book a court
 router.post("/book", async (req, res) => {
-    const { courtNumber, date, time, userId, name, game } =
-        req.body
-
-    //console.log("game", game)
-
     try {
-        const venue = await Venue.findOne({ name: name })
-        if (!venue) {
-            return res
-                .status(404)
-                .json({ message: "Venue not found" })
-        }
-
-        // Check for booking conflicts
-        const bookingConflict =
-            venue.bookings &&
-            venue.bookings.find(
-                booking =>
-                    booking.courtNumber === courtNumber &&
-                    booking.date === date &&
-                    booking.time === time
-            )
-
-        if (bookingConflict) {
-            return res
-                .status(400)
-                .json({ message: "Slot already booked" })
-        }
-
-        // Add new booking
-        venue.bookings.push({
+        const {
             courtNumber,
             date,
             time,
-            user: userId,
-            game
+            userId,
+            name,
+            game,
+            paymentOrderId
+        } = req.body
+
+        // Create booking
+        const newBooking = new Booking({
+            courtNumber,
+            date,
+            time,
+            userId,
+            venueName: name,
+            gameId: game,
+            paymentOrderId
         })
 
-        await venue.save()
+        await newBooking.save()
 
-        // Update game with booking details
-        await game.findByIdAndUpdate(game, {
-            isBooked: true,
-            courtNumber: courtNumber
-        })
+        // If this is a game booking, update the game status
+        if (game) {
+            await game.findByIdAndUpdate(game, {
+                isBooked: true,
+                courtNumber
+            })
+        }
 
         res.status(200).json({
-            message: "Booking successful",
-            venue
+            message: "Booking successful"
         })
     } catch (error) {
-        console.error(error)
-        res.status(500).json({ message: "Server error" })
+        console.error("Booking error:", error)
+        res.status(500).json({ message: "Booking failed" })
     }
 })
 

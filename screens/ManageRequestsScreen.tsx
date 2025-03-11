@@ -215,7 +215,7 @@ const ManageRequestsScreen = () => {
                                         : "white"
                             }}
                         >
-                            Invited (0)
+                            Invited 
                         </Text>
                     </Pressable>
 
@@ -249,7 +249,7 @@ const ManageRequestsScreen = () => {
                                         : "white"
                             }}
                         >
-                            Retired(0)
+                            Retired
                         </Text>
                     </Pressable>
                 </View>

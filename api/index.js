@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes")
 const gameRoutes = require("./routes/gameRoutes")
 const venueRoutes = require("./routes/venueRoutes")
 const paymentRoutes = require("./routes/paymentRoutes")
+const chatRoutes = require("./routes/chatRoutes")
 
 const app = express()
 
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/games", gameRoutes)
 app.use("/api/venues", venueRoutes)
 app.use("/api/payment", paymentRoutes)
+app.use("/api/chat", chatRoutes)
 
 // Start server
 const PORT = 3000

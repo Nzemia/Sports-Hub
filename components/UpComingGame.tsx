@@ -5,7 +5,7 @@ import {
     Text,
     View
 } from "react-native"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useTheme } from "@/constants/ThemeProvider"
 import {
@@ -28,7 +28,56 @@ const UpComingGame: React.FC<UpComingGameProps> = ({
 
     const navigation =
         useNavigation<GameScreenNavigationProp>()
+
+    const [isBooked, setIsBooked] = useState(item?.isBooked)
+    const [courtNumber, setCourtNumber] = useState(
+        item?.courtNumber
+    )
+    useEffect(() => {
+        setIsBooked(item?.isBooked)
+        setCourtNumber(item?.courtNumber)
+    }, [item?.isBooked, item?.courtNumber])
     //console.log("item", item)
+
+    const renderBookingStatus = () => (
+        <View
+            style={{
+                marginVertical: 10,
+                padding: isBooked ? 0 : 15,
+                borderRadius: 8,
+                borderColor: "#E0E0E0",
+                borderWidth: 2,
+                width: "100%"
+            }}
+        >
+            {isBooked ? (
+                <>
+                    <Text
+                        style={[
+                            styles.countNumber,
+                            { color: theme.text }
+                        ]}
+                    >
+                        {courtNumber}
+                    </Text>
+                    <View style={styles.bookedBadge}>
+                        <Text style={styles.bookedText}>
+                            Booked
+                        </Text>
+                    </View>
+                </>
+            ) : (
+                <Text
+                    style={[
+                        styles.availableText,
+                        { color: theme.text }
+                    ]}
+                >
+                    Available
+                </Text>
+            )}
+        </View>
+    )
     return (
         <SafeAreaView
             style={{
@@ -122,41 +171,7 @@ const UpComingGame: React.FC<UpComingGameProps> = ({
                             }}
                         >
                             {item?.isBooked ? (
-                                <>
-                                    <Text
-                                        style={[
-                                            styles.countNumber,
-                                            {
-                                                color: theme.text
-                                            }
-                                        ]}
-                                    >
-                                        {item?.courtNumber}
-                                    </Text>
-
-                                    <View
-                                        style={{
-                                            justifyContent:
-                                                "center",
-                                            alignItems:
-                                                "center",
-                                            backgroundColor:
-                                                "#56cc79",
-                                            paddingVertical: 5
-                                        }}
-                                    >
-                                        <Text
-                                            style={[
-                                                styles.bookedText,
-                                                {
-                                                    color: theme.text
-                                                }
-                                            ]}
-                                        >
-                                            Booked
-                                        </Text>
-                                    </View>
-                                </>
+                                renderBookingStatus()
                             ) : (
                                 <View>
                                     <Text

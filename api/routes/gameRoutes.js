@@ -70,15 +70,16 @@ router.post("/createGame", async (req, res) => {
 router.get("/", async (req, res) => {
     try {
         const { userId } = req.query
-        const games = await Game.find({
-            $or: [{ admin: userId }, { players: userId }]
-        })
+
+        // Fetch all games, not just user's games
+        const games = await Game.find({})
             .populate("admin")
             .populate("players", "image firstName lastName")
+            .sort({ createdAt: -1 })
 
         const currentDate = moment()
 
-        // Filter games based on current date only
+        // Filter active games
         const filteredGames = games.filter(game => {
             const gameDate = moment(game.date, "Do MMMM")
             return (
@@ -106,8 +107,11 @@ router.get("/", async (req, res) => {
             adminName: game.admin
                 ? `${game.admin.firstName} ${game.admin.lastName}`
                 : "Unknown",
+            isUserAdmin:
+                game.admin._id.toString() === userId,
             adminUrl: game.admin ? game.admin.image : null,
-            matchFull: game.matchFull
+            matchFull: game.matchFull,
+            activityAccess: game.activityAccess
         }))
 
         res.json(formattedGames)
@@ -188,31 +192,35 @@ router.post("/:gameId/request", async (req, res) => {
                 .json({ message: "Game not found" })
         }
 
-        // Check if game is private and user is not invited
-        if (
-            !game.isPublic &&
-            !game.invitedPlayers?.includes(userId)
-        ) {
+        if (game.matchFull) {
             return res.status(403).json({
                 message:
-                    "This is a private game. You need an invitation to join."
+                    "This game is full and not accepting new players"
             })
         }
 
-        // Check if the user has already requested to join the game
-        const existingRequest = game.requests.find(
+        const alreadyRequested = game.requests.some(
             request => request.userId.toString() === userId
         )
-        if (existingRequest) {
-            return res
-                .status(400)
-                .json({ message: "Request already sent" })
+        const alreadyPlayer = game.players.some(
+            player => player.toString() === userId
+        )
+
+        if (alreadyRequested) {
+            return res.status(403).json({
+                message:
+                    "You have already sent a request to join this game"
+            })
         }
 
-        // Add the user's ID and comment to the requests array
-        game.requests.push({ userId, comment })
+        if (alreadyPlayer) {
+            return res.status(403).json({
+                message:
+                    "You are already a player in this game"
+            })
+        }
 
-        // Save the updated game document
+        game.requests.push({ userId, comment })
         await game.save()
 
         res.status(200).json({
@@ -360,5 +368,36 @@ router.post("/toggle-match-full", async (req, res) => {
         })
     }
 })
+
+// Update game booking status
+router.patch(
+    "/:gameId/booking-status",
+    async (req, res) => {
+        try {
+            const { gameId } = req.params
+            const { isBooked, courtNumber } = req.body
+
+            const game = await Game.findById(gameId)
+            if (!game) {
+                return res
+                    .status(404)
+                    .json({ message: "Game not found" })
+            }
+
+            game.isBooked = isBooked
+            game.courtNumber = courtNumber
+            await game.save()
+
+            res.status(200).json({
+                message: "Game booking status updated"
+            })
+        } catch (err) {
+            console.error(err)
+            res.status(500).json({
+                message: "Failed to update booking status"
+            })
+        }
+    }
+)
 
 module.exports = router

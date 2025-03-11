@@ -1,67 +1,68 @@
 {
-    "expo": {
-        "name": "sportshub",
-        "slug": "sportshub",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
-        "scheme": "myapp",
-        "userInterfaceStyle": "automatic",
-        "newArchEnabled": true,
-        "owner": "nzemia",
-        "extra": {
-            "eas": {
-                "projectId": "0361e3d0-5b6c-45fc-8472-5df9b498d509"
-            }
-        },
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
-                "backgroundColor": "#ffffff"
-            }
-        },
-        "web": {
-            "bundler": "metro",
-            "output": "static",
-            "favicon": "./assets/images/favicon.png"
-        },
-        "plugins": [
-            "expo-router",
-            [
-                "expo-splash-screen",
-                {
-                    "image": "./assets/images/splash-icon.png",
-                    "imageWidth": 200,
-                    "resizeMode": "contain",
-                    "backgroundColor": "#ffffff"
-                }
-            ],
-            [
-                "expo-font",
-                {
-                    "fonts": [
-                        "./assets/fonts/Kanit-Bold.ttf",
-                        "./assets/fonts/Kanit-ExtraBold.ttf",
-                        "./assets/fonts/Kanit-Italic.ttf",
-                        "./assets/fonts/Kanit-Light.ttf",
-                        "./assets/fonts/Kanit-Medium.ttf",
-                        "./assets/fonts/Kanit-Regular.ttf",
-                        "./assets/fonts/Kanit-SemiBold.ttf"
-                    ]
-                }
-            ],
-            [
-                "expo-location",
-                {
-                    "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-                }
-            ]
-        ],
-        "experiments": {
-            "typedRoutes": true
+  "expo": {
+    "name": "sportshub",
+    "slug": "sportshub",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "owner": "nzemia",
+    "extra": {
+      "eas": {
+        "projectId": "0361e3d0-5b6c-45fc-8472-5df9b498d509"
+      }
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.nzemia.sportshub"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Kanit-Bold.ttf",
+            "./assets/fonts/Kanit-ExtraBold.ttf",
+            "./assets/fonts/Kanit-Italic.ttf",
+            "./assets/fonts/Kanit-Light.ttf",
+            "./assets/fonts/Kanit-Medium.ttf",
+            "./assets/fonts/Kanit-Regular.ttf",
+            "./assets/fonts/Kanit-SemiBold.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
+  }
 }
