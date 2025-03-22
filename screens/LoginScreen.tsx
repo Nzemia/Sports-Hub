@@ -32,7 +32,7 @@ type NameNavigationProp = NativeStackNavigationProp<
 
 type MainStackNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
-    "MainStack"
+    "Main"
 >
 
 const LoginScreen = () => {
@@ -51,7 +51,7 @@ const LoginScreen = () => {
 
     useEffect(() => {
         if (token) {
-            navigation.replace("MainStack")
+            navigation.replace("Main")
         }
     }, [token, navigation])
 
@@ -88,7 +88,7 @@ const LoginScreen = () => {
 
             if (response.status === 200) {
                 const token = response.data.token
-                console.log("token", token)
+                //console.log("token", token)
 
                 AsyncStorage.setItem("token", token)
                 setToken(token)
@@ -97,14 +97,15 @@ const LoginScreen = () => {
                 const pushToken =
                     await registerForPushNotificationsAsync()
 
-                // Update user with push token
                 await axios.post(
-                    "http://10.16.4.183:3000/api/users/update-token",
+                    "http://10.16.4.183:3000/api/auth/update-token",
                     {
-                        userId: response.data.userId,
+                        userId: response.data.user._id,
                         expoPushToken: pushToken
                     }
                 )
+
+                navigation.replace("Main")
             }
         } catch (error) {
             console.error("Login failed:", error)

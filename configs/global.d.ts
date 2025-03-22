@@ -7,7 +7,7 @@ export type RootStackParamList = {
     Password: undefined
     Image: undefined
     PreFinal: undefined
-    MainStack: undefined
+    Main: undefined
     Start: undefined
 
     // Game-related routes

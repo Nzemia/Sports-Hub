@@ -4,6 +4,7 @@ const {
     loginUser,
     getUserById
 } = require("../controllers/authController")
+const User = require("../models/userModel")
 
 const router = express.Router()
 

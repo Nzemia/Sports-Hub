@@ -3,6 +3,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View
 } from "react-native"
 import React, { useContext, useState } from "react"
@@ -475,51 +476,51 @@ const ProfileScreen = () => {
                             }}
                         />
 
-                       
-
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                gap: 10,
-                                marginTop: 15,
-                                marginBottom: 10
-                            }}
+                        <TouchableOpacity
+                            onPress={clearAuthToken}
                         >
                             <View
                                 style={{
-                                    width: 48,
-                                    height: 48,
-                                    borderRadius: 24,
-                                    backgroundColor:
-                                        "#E0E0E0",
-                                    justifyContent:
-                                        "center",
-                                    alignItems: "center"
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    gap: 10,
+                                    marginTop: 15,
+                                    marginBottom: 10
                                 }}
                             >
-                                <MaterialIcons
-                                    name="energy-savings-leaf"
-                                    size={24}
-                                    color={"green"}
-                                />
-                            </View>
-
-                            <Pressable
-                                onPress={clearAuthToken}
-                            >
-                                <Text
-                                    style={[
-                                        styles.containerHeadText,
-                                        {
-                                            color: theme.text
-                                        }
-                                    ]}
+                                <View
+                                    style={{
+                                        width: 48,
+                                        height: 48,
+                                        borderRadius: 24,
+                                        backgroundColor:
+                                            "#E0E0E0",
+                                        justifyContent:
+                                            "center",
+                                        alignItems: "center"
+                                    }}
                                 >
-                                    Logout
-                                </Text>
-                            </Pressable>
-                        </View>
+                                    <MaterialIcons
+                                        name="energy-savings-leaf"
+                                        size={24}
+                                        color={"green"}
+                                    />
+                                </View>
+
+                                <Pressable>
+                                    <Text
+                                        style={[
+                                            styles.containerHeadText,
+                                            {
+                                                color: theme.text
+                                            }
+                                        ]}
+                                    >
+                                        Logout
+                                    </Text>
+                                </Pressable>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
