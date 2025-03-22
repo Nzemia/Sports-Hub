@@ -166,7 +166,7 @@ const HomeScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/auth/user/${userId}`
+                `http://10.16.4.183:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {
@@ -195,7 +195,7 @@ const HomeScreen = () => {
     const fetchUpcomingGames = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/games/upcoming/${userId}`
+                `http://10.16.4.183:3000/api/games/upcoming/${userId}`
             )
             setUpcomingGames(response.data)
         } catch (error) {
@@ -657,13 +657,11 @@ const HomeScreen = () => {
                     >
                         <Image
                             style={{
-                                width: 120,
+                                width: 350,
                                 height: 70,
-                                resizeMode: "contain"
+                                resizeMode: "cover"
                             }}
-                            source={{
-                                uri: "https://playo-website.gumlet.io/playo-website-v2/logos-icons/new-logo-playo.png?q=50"
-                            }}
+                            source={require("../assets/images/sportshub.png")}
                         />
                     </View>
                     <Text

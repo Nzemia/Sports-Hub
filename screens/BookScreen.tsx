@@ -63,7 +63,7 @@ const BookScreen = () => {
             setUserId(userId)
 
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/auth/user/${userId}`
+                `http://10.16.4.183:3000/api/auth/user/${userId}`
             )
 
             if (!response.data) {

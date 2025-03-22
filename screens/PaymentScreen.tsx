@@ -92,7 +92,7 @@ const PaymentScreen: React.FC = () => {
 
             // Step 1: Initiate M-Pesa Payment
             const paymentResponse = await axios.post(
-                "http://10.16.13.88:3000/api/payment/initiate",
+                "http://10.16.4.183:3000/api/payment/initiate",
                 {
                     phoneNumber: formatted,
                     amount: Math.round(total),
@@ -111,7 +111,7 @@ const PaymentScreen: React.FC = () => {
             // Step 2: Book the slot
             try {
                 const bookingResponse = await axios.post(
-                    "http://10.16.13.88:3000/api/venues/book",
+                    "http://10.16.4.183:3000/api/venues/book",
                     {
                         courtNumber:
                             route.params.selectedCourt,
@@ -128,7 +128,7 @@ const PaymentScreen: React.FC = () => {
                     // Update the game's booking status
                     if (route.params?.gameId) {
                         await axios.patch(
-                            `http://10.16.13.88:3000/api/games/${route.params.gameId}/booking-status`,
+                            `http://10.16.4.183:3000/api/games/${route.params.gameId}/booking-status`,
                             {
                                 isBooked: true,
                                 courtNumber:

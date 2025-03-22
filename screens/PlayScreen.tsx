@@ -123,7 +123,7 @@ const PlayScreen: React.FC = () => {
     const fetchUser = async () => {
         try {
             const response = await axios.get<User>(
-                `http://10.16.13.88:3000/api/auth/user/${userId}`
+                `http://10.16.4.183:3000/api/auth/user/${userId}`
             )
             setUser(response.data)
         } catch (error) {
@@ -137,7 +137,7 @@ const PlayScreen: React.FC = () => {
     const fetchGames = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/games`
+                `http://10.16.4.183:3000/api/games`
             )
 
             // Filter games based on the selected option
@@ -191,7 +191,7 @@ const PlayScreen: React.FC = () => {
         try {
             //console.log("user id", userId)
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/games/upcoming/${userId}`
+                `http://10.16.4.183:3000/api/games/upcoming/${userId}`
             )
             setUpcomingGames(response.data)
         } catch (error) {
@@ -233,7 +233,11 @@ const PlayScreen: React.FC = () => {
                             gap: 5
                         }}
                     >
-                        <Pressable onPress={() => navigation.goBack()}>
+                        <Pressable
+                            onPress={() =>
+                                navigation.goBack()
+                            }
+                        >
                             <Ionicons
                                 name={"arrow-back"}
                                 size={24}

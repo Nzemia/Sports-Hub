@@ -48,7 +48,7 @@ const ChatScreen = ({ route }) => {
     const fetchMessages = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/chat/${gameId}`
+                `http://10.16.4.183:3000/api/chat/${gameId}`
             )
             setMessages(response.data)
         } catch (error) {
@@ -61,7 +61,7 @@ const ChatScreen = ({ route }) => {
 
         try {
             await axios.post(
-                "http://10.16.13.88:3000/api/chat/send",
+                "http://10.16.4.183:3000/api/chat/send",
                 {
                     gameId,
                     senderId: userId,

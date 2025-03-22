@@ -122,7 +122,7 @@ const CreateActivity = () => {
             }
 
             const response = await axios.post(
-                "http://10.16.13.88:3000/api/games/createGame",
+                "http://10.16.4.183:3000/api/games/createGame",
                 gameData
             )
 

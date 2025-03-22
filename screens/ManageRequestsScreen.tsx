@@ -62,7 +62,7 @@ const ManageRequestsScreen = () => {
             }
             console.log(user)
             const response = await axios.post(
-                "http://10.16.13.88:3000/api/games/accept",
+                "http://10.16.4.183:3000/api/games/accept",
                 user
             )
 
@@ -84,7 +84,7 @@ const ManageRequestsScreen = () => {
     const fetchRequests = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/games/${gameId}/requests`
+                `http://10.16.4.183:3000/api/games/${gameId}/requests`
             )
             setRequests(response.data)
         } catch (error) {
@@ -98,7 +98,7 @@ const ManageRequestsScreen = () => {
     const fetchPlayers = async () => {
         try {
             const response = await axios.get(
-                `http://10.16.13.88:3000/api/games/${gameId}/players`
+                `http://10.16.4.183:3000/api/games/${gameId}/players`
             )
             setPlayers(response.data)
         } catch (error) {
@@ -215,7 +215,7 @@ const ManageRequestsScreen = () => {
                                         : "white"
                             }}
                         >
-                            Invited 
+                            Invited
                         </Text>
                     </Pressable>
 
@@ -347,14 +347,12 @@ const ManageRequestsScreen = () => {
                                             <View>
                                                 <Image
                                                     style={{
-                                                        width: 110,
+                                                        width: 120,
                                                         height: 60,
                                                         resizeMode:
-                                                            "contain"
+                                                            "cover"
                                                     }}
-                                                    source={{
-                                                        uri: "https://playo-website.gumlet.io/playo-website-v2/logos-icons/new-logo-playo.png?q=50"
-                                                    }}
+                                                    source={require("../assets/images/sportshub.png")}
                                                 />
                                             </View>
                                         </View>

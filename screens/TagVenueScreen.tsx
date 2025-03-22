@@ -46,7 +46,7 @@ const TagVenueScreen = () => {
         const fetchVenues = async () => {
             try {
                 const response = await axios.get(
-                    "http://10.16.13.88:3000/api/venues"
+                    "http://10.16.4.183:3000/api/venues"
                 )
                 setVenues(response.data)
             } catch (error) {
