@@ -1,13 +1,13 @@
 export const data = [
     {
         id: "10",
-        image: "https://playov2.gumlet.io/v3_homescreen/marketing_journey/Tennis%20Spotlight.png",
+        image: "https://i0.wp.com/www.kbc.co.ke/wp-content/uploads/2024/01/Kenya-Nurmber-One-Brian-Mutua-during-a-past-iinternational-outing.jpg?fit=1280%2C853&ssl=1",
         text: "Learn Tennis",
         description: "Know more"
     },
     {
         id: "11",
-        image: "https://playov2.gumlet.io/v3_homescreen/marketing_journey/playo_spotlight_08.png",
+        image: "https://cdn3.mozzartsport.co.ke/upload/825x464/News/Image/2021_08/1628600729223_Kenya.jpg",
         text: "Up Your Game",
         description: "Find a coach"
     },
@@ -20,7 +20,7 @@ export const data = [
     {
         id: "13",
         image: "https://playov2.gumlet.io/v3_homescreen/marketing_journey/playo_spotlight_02.png",
-        text: "Spotify Playolist",
+        text: "SportsHub Playolist",
         description: "Show more"
     }
 ]
